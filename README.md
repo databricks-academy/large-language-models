@@ -45,7 +45,7 @@ This repo contains the notebooks for the [Large Language Models: Application thr
 
 ---
 ## How do I install the datasets and models locally?
-1. To improve performance of the code, we highly recommend pre-installing the datasets and models by running the `LLM 00a - Install Datasets`
+1. To improve performance of the code, we highly recommend pre-installing the datasets and models by running the `LLM 00a - Install Datasets` notebook. </br>
     <img width="400" alt="install_datasets_file" src="https://files.training.databricks.com/images/llm/installdatasets1.png">
 
 2. You should run this script before running any of the other notebooks. This can take up to 25mins to complete. 
