@@ -93,10 +93,11 @@ weaviate_network = os.environ["WEAVIATE_NETWORK"]
 
 # COMMAND ----------
 
-import weaviate 
+import weaviate
 
-client = weaviate.Client(weaviate_network, 
-                         additional_headers={"X-OpenAI-Api-Key": openai.api_key})
+client = weaviate.Client(
+    weaviate_network, additional_headers={"X-OpenAI-Api-Key": openai.api_key}
+)
 client.is_ready()
 
 # COMMAND ----------
@@ -109,11 +110,16 @@ client.is_ready()
 
 # COMMAND ----------
 
-df = (spark.read
-      .option("header", True)
-      .option("sep", ";")
-      .format("csv")
-      .load(f"{DA.paths.datasets}/news/labelled_newscatcher_dataset.csv".replace("/dbfs", "dbfs:")))
+df = (
+    spark.read.option("header", True)
+    .option("sep", ";")
+    .format("csv")
+    .load(
+        f"{DA.paths.datasets}/news/labelled_newscatcher_dataset.csv".replace(
+            "/dbfs", "dbfs:"
+        )
+    )
+)
 display(df)
 
 # COMMAND ----------
@@ -137,14 +143,14 @@ class_obj = {
     "class": class_name,
     "description": "News topics collected by NewsCatcher",
     "properties": [
-            {"name": "topic", "dataType": ["string"]},
-            {"name": "link", "dataType": ["string"]},
-            {"name": "domain", "dataType": ["string"]},
-            {"name": "published_date", "dataType": ["string"]},
-            {"name": "title", "dataType": ["string"]},
-            {"name": "lang", "dataType": ["string"]}
+        {"name": "topic", "dataType": ["string"]},
+        {"name": "link", "dataType": ["string"]},
+        {"name": "domain", "dataType": ["string"]},
+        {"name": "published_date", "dataType": ["string"]},
+        {"name": "title", "dataType": ["string"]},
+        {"name": "lang", "dataType": ["string"]},
     ],
-    "vectorizer":  "text2vec-openai"
+    "vectorizer": "text2vec-openai",
 }
 
 # COMMAND ----------
@@ -177,11 +183,11 @@ print(json.dumps(client.schema.get(class_name), indent=4))
 
 # COMMAND ----------
 
-(df.limit(100) 
-    .write
-    .format("io.weaviate.spark.Weaviate")
-    .option("scheme", "http") 
-    .option("host", weaviate_network.split("https://")[1]) 
+(
+    df.limit(100)
+    .write.format("io.weaviate.spark.Weaviate")
+    .option("scheme", "http")
+    .option("host", weaviate_network.split("https://")[1])
     .option("header:X-OpenAI-Api-Key", openai.api_key)
     .option("className", class_name)
     .mode("append")
@@ -215,11 +221,10 @@ where_filter = {
     "valueString": "SCIENCE",
 }
 
-# We are going to search for any titles related to locusts 
+# We are going to search for any titles related to locusts
 near_text = {"concepts": "locust"}
 (
-    client.query
-    .get(class_name, ["topic", "domain", "title"])
+    client.query.get(class_name, ["topic", "domain", "title"])
     .with_where(where_filter)
     .with_near_text(near_text)
     .with_limit(2)
@@ -237,19 +242,20 @@ near_text = {"concepts": "locust"}
 
 import openai
 
-model= "text-embedding-ada-002"
+model = "text-embedding-ada-002"
 openai_object = openai.Embedding.create(input=["locusts"], model=model)
 
 openai_embedding = openai_object["data"][0]["embedding"]
 
 (
-    client.query
-    .get("News", ["topic", "domain", "title"])
+    client.query.get("News", ["topic", "domain", "title"])
     .with_where(where_filter)
-    .with_near_vector({
-        "vector": openai_embedding,
-        "distance": 0.7 # this sets a threshold for distance metric
-    })
+    .with_near_vector(
+        {
+            "vector": openai_embedding,
+            "distance": 0.7,  # this sets a threshold for distance metric
+        }
+    )
     .with_limit(2)
     .do()
 )

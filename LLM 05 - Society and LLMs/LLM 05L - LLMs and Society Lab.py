@@ -19,7 +19,7 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install nlptest==1.1.0
+# MAGIC %pip install nlptest==1.4.0
 
 # COMMAND ----------
 
@@ -48,9 +48,8 @@
 from datasets import load_dataset
 
 bold = load_dataset(
-    "AlexaAI/bold",
-    split="train",
-    cache_dir=DA.paths.datasets)  # Note: We specify cache_dir to use pre-cached data.
+    "AlexaAI/bold", split="train", cache_dir=DA.paths.datasets
+)  # Note: We specify cache_dir to use pre-cached data.
 
 # COMMAND ----------
 
@@ -63,16 +62,16 @@ from random import sample
 
 def generate_samples(category_name: str, n: int) -> list:
     """
-        Given a category, returns `n` samples
+    Given a category, returns `n` samples
     """
-    bold_samples = (sample([p for p in bold if p["category"] == category_name], n))
+    bold_samples = sample([p for p in bold if p["category"] == category_name], n)
     return bold_samples
 
 science_bold = generate_samples("scientific_occupations", 10)
 dance_bold = generate_samples("dance_occupations", 10)
 
 print("Science example: ", science_bold[0])
-print("-"*60)
+print("-" * 60)
 print("Dance example: ", dance_bold[0])
 
 # COMMAND ----------
@@ -92,10 +91,11 @@ np.unique(bold["category"])
 
 # COMMAND ----------
 
-# TODO 
- 
-group1_bold = generate_samples("<FILL_IN>", 50)
-group2_bold = generate_samples("<FILL_IN>", 50)
+# TODO
+
+# Generate samples from BOLD dataset
+group1_bold = generate_samples("<FILL_IN>", 10)
+group2_bold = generate_samples("<FILL_IN>", 10)
 
 # COMMAND ----------
 
@@ -124,7 +124,7 @@ print("Dance prompt example: ", dance_prompts[0])
 
 # COMMAND ----------
 
-# TODO 
+# TODO
 
 group1_prompts = [p["prompts"][0] for p in <FILL_IN>]
 group2_prompts = [p["prompts"][0] for p in <FILL_IN>]
@@ -145,18 +145,19 @@ dbTestQuestion5_2(group1_prompts, group2_prompts)
 from transformers import pipeline, AutoTokenizer
 
 text_generation = pipeline(
-    "text-generation",
-    model="gpt2",
-    model_kwargs={"cache_dir":DA.paths.datasets})  # Note: We specify cache_dir to use a pre-cached model.
+    "text-generation", model="gpt2", model_kwargs={"cache_dir": DA.paths.datasets}
+)  # Note: We specify cache_dir to use a pre-cached model.
 
 def complete_sentence(text_generation_pipeline: pipeline, prompts: list) -> list:
     """
-        Via a list of prompts a prompt list is appended to by the generated `text_generation_pipeline`.
-    """    
+    Via a list of prompts a prompt list is appended to by the generated `text_generation_pipeline`.
+    """
     prompt_continuations = []
     for prompt in prompts:
-        generation = text_generation_pipeline(prompt, max_length=30, do_sample=False, pad_token_id=50256)
-        continuation = generation[0]["generated_text"].replace(prompt,"")
+        generation = text_generation_pipeline(
+            prompt, max_length=30, do_sample=False, pad_token_id=50256
+        )
+        continuation = generation[0]["generated_text"].replace(prompt, "")
         prompt_continuations.append(continuation)
     return prompt_continuations
 
@@ -186,7 +187,7 @@ science_continuation = complete_sentence(text_generation, science_prompts)
 
 # COMMAND ----------
 
-# TODO 
+# TODO
 
 group1_continuation = complete_sentence(<FILL_IN>)
 group2_continuation = complete_sentence(<FILL_IN>)
@@ -206,10 +207,7 @@ dbTestQuestion5_3(group1_continuation, group2_continuation)
 
 import evaluate
 
-regard = evaluate.load(
-    "regard",
-    "compare",
-    cache_dir=DA.paths.datasets)
+regard = evaluate.load("regard", "compare", cache_dir=DA.paths.datasets)
 
 # COMMAND ----------
 
@@ -218,7 +216,7 @@ regard = evaluate.load(
 
 # COMMAND ----------
 
-# this returns the regard scores of each string in the input list 
+# this returns the regard scores of each string in the input list
 regard.compute(data=science_continuation, references=dance_continuation)
 
 # COMMAND ----------
@@ -238,7 +236,9 @@ regard.compute(data=<FILL_IN>, references=<FILL_IN>)
 
 # Test your answer. DO NOT MODIFY THIS CELL.
 
-dbTestQuestion5_4(regard.compute(data=group1_continuation, references=group2_continuation))
+dbTestQuestion5_4(
+    regard.compute(data=group1_continuation, references=group2_continuation)
+)
 
 # COMMAND ----------
 
@@ -280,7 +280,7 @@ h = Harness(task="ner", model="dslim/bert-base-NER", hub="huggingface")
 
 # COMMAND ----------
 
-# h.generate().run().report() 
+# h.generate().run().report()
 
 # COMMAND ----------
 
@@ -293,7 +293,7 @@ h = Harness(task="ner", model="dslim/bert-base-NER", hub="huggingface")
 
 # MAGIC %md ## Submit your Results (edX Verified Only)
 # MAGIC
-# MAGIC To get credit for this lab, click the submit button to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
+# MAGIC To get credit for this lab, click the submit button in the top right to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
 
 # COMMAND ----------
 

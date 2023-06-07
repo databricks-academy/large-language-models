@@ -10,9 +10,9 @@
 # MAGIC %md
 # MAGIC # Project Information
 # MAGIC
-# MAGIC * Name: **Template Course**
+# MAGIC * Name: **LLM: Application through Production**
 # MAGIC * Version:  **1.0.1**
-# MAGIC * Built On: **Jun 7, 2023 at 14:57:14 UTC**
+# MAGIC * Built On: **Jun 7, 2023 at 21:58:56 UTC**
 
 # COMMAND ----------
 

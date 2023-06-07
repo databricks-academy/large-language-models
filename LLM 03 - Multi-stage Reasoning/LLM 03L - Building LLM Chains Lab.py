@@ -49,11 +49,11 @@
 # COMMAND ----------
 
 # TODO
-For many of the services that we'll using in the notebook, we'll need a HuggingFace API key so this cell will ask for it:
-HuggingFace Hub: https://huggingface.co/inference-api
+# For many of the services that we'll using in the notebook, we'll need a HuggingFace API key so this cell will ask for it:
+# HuggingFace Hub: https://huggingface.co/inference-api
 
 import os
-os.environ['HUGGINGFACEHUB_API_TOKEN'] = '<FILL IN>'
+os.environ["HUGGINGFACEHUB_API_TOKEN"] = "<FILL IN>"
 
 # COMMAND ----------
 
@@ -74,7 +74,9 @@ from langchain.vectorstores import Chroma
 from langchain.document_loaders import TextLoader
 
 # We have some fake laptop reviews that we can load in
-laptop_reviews = TextLoader(f"{DA.paths.datasets}/reviews/fake_laptop_reviews.txt", encoding="utf8")
+laptop_reviews = TextLoader(
+    f"{DA.paths.datasets}/reviews/fake_laptop_reviews.txt", encoding="utf8"
+)
 document = laptop_reviews.load()
 display(document)
 
@@ -94,13 +96,15 @@ from langchain.vectorstores import Chroma
 # First we split the data into manageable chunks to store as vectors. There isn't an exact way to do this, more chunks means more detailed context, but will increase the size of our vectorstore.
 text_splitter = CharacterTextSplitter(chunk_size=250, chunk_overlap=10)
 texts = text_splitter.split_documents(document)
-# Now we'll create embeddings for our document so we can store it in a vector store and feed the data into an LLM. We'll use the sentence-transformers model for out embeddings. https://www.sbert.net/docs/pretrained_models.html#sentence-embedding-models/ 
+# Now we'll create embeddings for our document so we can store it in a vector store and feed the data into an LLM. We'll use the sentence-transformers model for out embeddings. https://www.sbert.net/docs/pretrained_models.html#sentence-embedding-models/
 model_name = "sentence-transformers/all-MiniLM-L6-v2"
 embeddings = HuggingFaceEmbeddings(
-    model_name=model_name,
-    cache_folder=DA.paths.datasets)  # Use a pre-cached model
+    model_name=model_name, cache_folder=DA.paths.datasets
+)  # Use a pre-cached model
 # Finally we make our Index using chromadb and the embeddings LLM
-chromadb_index = Chroma.from_documents(texts, embeddings, persist_directory=DA.paths.working_dir)
+chromadb_index = Chroma.from_documents(
+    texts, embeddings, persist_directory=DA.paths.working_dir
+)
 
 # COMMAND ----------
 
@@ -145,25 +149,19 @@ laptop_qa = RetrievalQA.from_chain_type(
 # COMMAND ----------
 
 # Let's ask the chain about the product we have.
-laptop_name = laptop_qa.run(
-    "What is the full name of the laptop?"
-)
+laptop_name = laptop_qa.run("What is the full name of the laptop?")
 display(laptop_name)
 
 # COMMAND ----------
 
 # Now we'll ask the chain about the product.
-laptop_features = laptop_qa.run(
-    "What are some of the laptop's features?"
-)
+laptop_features = laptop_qa.run("What are some of the laptop's features?")
 display(laptop_features)
 
 # COMMAND ----------
 
 # Finally let's ask the chain about the reviews.
-laptop_reviews = laptop_qa.run(
-    "What is the general sentiment of the reviews?"
-)
+laptop_reviews = laptop_qa.run("What is the general sentiment of the reviews?")
 display(laptop_reviews)
 
 # COMMAND ----------
@@ -221,12 +219,12 @@ dbTestQuestion3_1(embeddings, docsearch)
 # COMMAND ----------
 
 # TODO
-Let's start with the simplest method: "Stuff" which puts all of the data into the prompt and asks a question of it:
+# Let's start with the simplest method: "Stuff" which puts all of the data into the prompt and asks a question of it:
 qa = RetrievalQA.from_chain_type(<FILL_IN>)
 query = "What happens in the play Hamlet?"
-Run the query
+# Run the query
 query_results_hamlet = <FILL_IN>
- 
+
 query_results_hamlet
 
 # COMMAND ----------
@@ -255,7 +253,7 @@ dbTestQuestion3_2(qa, query_results_hamlet)
 qa = RetrievalQA.from_chain_type(llm=hf_llm, chain_type=<FILL_IN>, retriever=docsearch.as_retriever())
 query = "Who is the main character in the Merchant of Venice?"
 query_results_venice = <FILL_IN>
- 
+
 query_results_venice
 
 # COMMAND ----------
@@ -273,12 +271,12 @@ dbTestQuestion3_3(qa, query_results_venice)
 # COMMAND ----------
 
 # TODO
-That's much better! Let's try another type
+# That's much better! Let's try another type
 
 qa = RetrievalQA.from_chain_type(llm=hf_llm, chain_type=<FILL_IN>, retriever=docsearch.as_retriever())
 query = "What happens to romeo and juliet?"
 query_results_romeo = <FILL_IN>
- 
+
 query_results_romeo
 
 # COMMAND ----------
@@ -291,7 +289,7 @@ dbTestQuestion3_4(qa, query_results_romeo)
 
 # MAGIC %md ## Submit your Results (edX Verified Only)
 # MAGIC
-# MAGIC To get credit for this lab, click the submit button to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
+# MAGIC To get credit for this lab, click the submit button in the top right to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
 
 # COMMAND ----------
 

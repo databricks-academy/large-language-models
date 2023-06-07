@@ -80,9 +80,8 @@ from transformers import pipeline
 # COMMAND ----------
 
 xsum_dataset = load_dataset(
-    "xsum",
-    version="1.2.0",
-    cache_dir=DA.paths.datasets)  # Note: We specify cache_dir to use predownloaded data.
+    "xsum", version="1.2.0", cache_dir=DA.paths.datasets
+)  # Note: We specify cache_dir to use predownloaded data.
 xsum_dataset  # The printed representation of this object shows the `num_rows` of each dataset split.
 
 # COMMAND ----------
@@ -113,7 +112,8 @@ summarizer = pipeline(
     min_length=20,
     max_length=40,
     truncation=True,
-    model_kwargs={"cache_dir":DA.paths.datasets})  # Note: We specify cache_dir to use predownloaded models.
+    model_kwargs={"cache_dir": DA.paths.datasets},
+)  # Note: We specify cache_dir to use predownloaded models.
 
 # COMMAND ----------
 
@@ -132,8 +132,12 @@ results = summarizer(xsum_sample["document"])
 import pandas as pd
 
 display(
-    pd.DataFrame.from_dict(results).rename({"summary_text": "generated_summary"}, axis=1).join(
-        pd.DataFrame.from_dict(xsum_sample))[["generated_summary", "summary", "document"]])
+    pd.DataFrame.from_dict(results)
+    .rename({"summary_text": "generated_summary"}, axis=1)
+    .join(pd.DataFrame.from_dict(xsum_sample))[
+        ["generated_summary", "summary", "document"]
+    ]
+)
 
 # COMMAND ----------
 
@@ -150,9 +154,8 @@ display(
 # COMMAND ----------
 
 poem_dataset = load_dataset(
-    "poem_sentiment",
-    version="1.0.0",
-    cache_dir=DA.paths.datasets)
+    "poem_sentiment", version="1.0.0", cache_dir=DA.paths.datasets
+)
 poem_sample = poem_dataset["train"].select(range(10))
 display(poem_sample.to_pandas())
 
@@ -165,11 +168,12 @@ display(poem_sample.to_pandas())
 sentiment_classifier = pipeline(
     task="text-classification",
     model="nickwong64/bert-base-uncased-poems-sentiment",
-    model_kwargs={"cache_dir":DA.paths.datasets})
+    model_kwargs={"cache_dir": DA.paths.datasets},
+)
 
 # COMMAND ----------
 
-results = sentiment_classifier(poem_sample['verse_text'])
+results = sentiment_classifier(poem_sample["verse_text"])
 
 # COMMAND ----------
 
@@ -177,8 +181,11 @@ results = sentiment_classifier(poem_sample['verse_text'])
 # The score indicates the model's confidence in its prediction.
 
 # Join predictions with ground-truth data
-joined_data = pd.DataFrame.from_dict(results).rename({"label":"predicted_label"}, axis=1).join(
-    pd.DataFrame.from_dict(poem_sample).rename({"label":"true_label"}, axis=1))
+joined_data = (
+    pd.DataFrame.from_dict(results)
+    .rename({"label": "predicted_label"}, axis=1)
+    .join(pd.DataFrame.from_dict(poem_sample).rename({"label": "true_label"}, axis=1))
+)
 
 # Change label indices to text labels
 sentiment_labels = {0: "negative", 1: "positive", 2: "no_impact", 3: "mixed"}
@@ -209,11 +216,14 @@ display(joined_data[["predicted_label", "true_label", "score", "verse_text"]])
 en_to_es_translation_pipeline = pipeline(
     task="translation",
     model="Helsinki-NLP/opus-mt-en-es",
-    model_kwargs={"cache_dir":DA.paths.datasets})
+    model_kwargs={"cache_dir": DA.paths.datasets},
+)
 
 # COMMAND ----------
 
-en_to_es_translation_pipeline("Existing, open-source (and proprietary) models can be used out-of-the-box for many applications.")
+en_to_es_translation_pipeline(
+    "Existing, open-source (and proprietary) models can be used out-of-the-box for many applications."
+)
 
 # COMMAND ----------
 
@@ -225,15 +235,20 @@ t5_small_pipeline = pipeline(
     task="text2text-generation",
     model="t5-small",
     max_length=50,
-    model_kwargs={"cache_dir":DA.paths.datasets})
+    model_kwargs={"cache_dir": DA.paths.datasets},
+)
 
 # COMMAND ----------
 
-t5_small_pipeline("translate English to French: Existing, open-source (and proprietary) models can be used out-of-the-box for many applications.")
+t5_small_pipeline(
+    "translate English to French: Existing, open-source (and proprietary) models can be used out-of-the-box for many applications."
+)
 
 # COMMAND ----------
 
-t5_small_pipeline("translate English to Romanian: Existing, open-source (and proprietary) models can be used out-of-the-box for many applications.")
+t5_small_pipeline(
+    "translate English to Romanian: Existing, open-source (and proprietary) models can be used out-of-the-box for many applications."
+)
 
 # COMMAND ----------
 
@@ -252,19 +267,28 @@ t5_small_pipeline("translate English to Romanian: Existing, open-source (and pro
 zero_shot_pipeline = pipeline(
     task="zero-shot-classification",
     model="cross-encoder/nli-deberta-v3-small",
-    model_kwargs={"cache_dir":DA.paths.datasets})
+    model_kwargs={"cache_dir": DA.paths.datasets},
+)
+
 
 def categorize_article(article: str) -> None:
     """
-        This helper function defines the categories (labels) which the model must use to label articles.
-        Note that our model was NOT fine-tuned to use these specific labels,
-        but it "knows" what the labels mean from its more general training.
+    This helper function defines the categories (labels) which the model must use to label articles.
+    Note that our model was NOT fine-tuned to use these specific labels,
+    but it "knows" what the labels mean from its more general training.
 
-        This function then prints out the predicted labels alongside their confidence scores.
+    This function then prints out the predicted labels alongside their confidence scores.
     """
     results = zero_shot_pipeline(
         article,
-        candidate_labels=["politics", "finance", "sports", "science and technology", "pop culture", "breaking news"]
+        candidate_labels=[
+            "politics",
+            "finance",
+            "sports",
+            "science and technology",
+            "pop culture",
+            "breaking news",
+        ],
     )
     # Print the results nicely
     del results["sequence"]
@@ -273,7 +297,7 @@ def categorize_article(article: str) -> None:
 # COMMAND ----------
 
 categorize_article(
-"""
+    """
 Simone Favaro got the crucial try with the last move of the game, following earlier touchdowns by Chris Fusaro, Zander Fagerson and Junior Bulumakau.
 Rynard Landman and Ashton Hewitt got a try in either half for the Dragons.
 Glasgow showed far superior strength in depth as they took control of a messy match in the second period.
@@ -300,7 +324,7 @@ Replacements: Rhys Buckley, Phil Price, Shaun Knight, Matthew Screech, Ollie Gri
 # COMMAND ----------
 
 categorize_article(
-"""
+    """
 The full cost of damage in Newton Stewart, one of the areas worst affected, is still being assessed.
 Repair work is ongoing in Hawick and many roads in Peeblesshire remain badly affected by standing water.
 Trains on the west coast mainline face disruption due to damage at the Lamington Viaduct.
@@ -344,7 +368,8 @@ few_shot_pipeline = pipeline(
     task="text-generation",
     model="EleutherAI/gpt-neo-1.3B",
     max_new_tokens=10,
-    model_kwargs={"cache_dir":DA.paths.datasets})
+    model_kwargs={"cache_dir": DA.paths.datasets},
+)
 
 # COMMAND ----------
 
@@ -359,11 +384,12 @@ eos_token_id = few_shot_pipeline.tokenizer.encode("###")[0]
 
 # Without any examples, the model output is inconsistent and usually incorrect.
 results = few_shot_pipeline(
-"""For each tweet, describe its sentiment:
+    """For each tweet, describe its sentiment:
 
 [Tweet]: "This new music video was incredible"
 [Sentiment]:""",
-eos_token_id=eos_token_id)
+    eos_token_id=eos_token_id,
+)
 
 print(results[0]["generated_text"])
 
@@ -371,14 +397,15 @@ print(results[0]["generated_text"])
 
 # With only 1 example, the model may or may not get the answer right.
 results = few_shot_pipeline(
-"""For each tweet, describe its sentiment:
+    """For each tweet, describe its sentiment:
 
 [Tweet]: "This is the link to the article"
 [Sentiment]: Neutral
 ###
 [Tweet]: "This new music video was incredible"
 [Sentiment]:""",
-eos_token_id=eos_token_id)
+    eos_token_id=eos_token_id,
+)
 
 print(results[0]["generated_text"])
 
@@ -386,7 +413,7 @@ print(results[0]["generated_text"])
 
 # With 1 example for each sentiment, the model is more likely to understand!
 results = few_shot_pipeline(
-"""For each tweet, describe its sentiment:
+    """For each tweet, describe its sentiment:
 
 [Tweet]: "I hate it when my phone battery dies."
 [Sentiment]: Negative
@@ -399,7 +426,8 @@ results = few_shot_pipeline(
 ###
 [Tweet]: "This new music video was incredible"
 [Sentiment]:""",
-eos_token_id=eos_token_id)
+    eos_token_id=eos_token_id,
+)
 
 print(results[0]["generated_text"])
 
@@ -411,7 +439,7 @@ print(results[0]["generated_text"])
 
 # The model isn't ready to serve drinks!
 results = few_shot_pipeline(
-"""For each food, suggest a good drink pairing:
+    """For each food, suggest a good drink pairing:
 
 [food]: tapas
 [drink]: wine
@@ -424,7 +452,8 @@ results = few_shot_pipeline(
 ###
 [food]: scone
 [drink]:""",
-eos_token_id=eos_token_id)
+    eos_token_id=eos_token_id,
+)
 
 print(results[0]["generated_text"])
 
@@ -432,7 +461,7 @@ print(results[0]["generated_text"])
 
 # This example sometimes works and sometimes does not, when sampling.  Too abstract?
 results = few_shot_pipeline(
-"""Given a word describing how someone is feeling, suggest a description of that person.  The description should not include the original word.
+    """Given a word describing how someone is feeling, suggest a description of that person.  The description should not include the original word.
 
 [word]: happy
 [description]: smiling, laughing, clapping
@@ -445,7 +474,8 @@ results = few_shot_pipeline(
 ###
 [word]: confused
 [description]:""",
-eos_token_id=eos_token_id)
+    eos_token_id=eos_token_id,
+)
 
 print(results[0]["generated_text"])
 
@@ -454,7 +484,7 @@ print(results[0]["generated_text"])
 # We override max_new_tokens to generate longer answers.
 # These book descriptions were taken from their corresponding Wikipedia pages.
 results = few_shot_pipeline(
-"""Generate a book summary from the title:
+    """Generate a book summary from the title:
 
 [book title]: "Stranger in a Strange Land"
 [book description]: "This novel tells the story of Valentine Michael Smith, a human who comes to Earth in early adulthood after being born on the planet Mars and raised by Martians, and explores his interaction with and eventual transformation of Terran culture."
@@ -467,8 +497,9 @@ results = few_shot_pipeline(
 ###
 [book title]: "Blue Mars"
 [book description]:""",
-eos_token_id=eos_token_id,
-max_new_tokens=50)
+    eos_token_id=eos_token_id,
+    max_new_tokens=50,
+)
 
 print(results[0]["generated_text"])
 
@@ -536,7 +567,7 @@ summarizer(xsum_sample["document"][0], do_sample=True)
 # COMMAND ----------
 
 # We can modify sampling to be more greedy by limiting sampling to the top_k or top_p most likely next tokens.
-summarizer(xsum_sample["document"][0], do_sample=True, top_k=10, top_p=.8)
+summarizer(xsum_sample["document"][0], do_sample=True, top_k=10, top_p=0.8)
 
 # COMMAND ----------
 
@@ -560,30 +591,25 @@ summarizer(xsum_sample["document"][0], do_sample=True, top_k=10, top_p=.8)
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # Load the pre-trained tokenizer and model.
-tokenizer = AutoTokenizer.from_pretrained(
-    "t5-small",
-    cache_dir=DA.paths.datasets)
-model = AutoModelForSeq2SeqLM.from_pretrained(
-    "t5-small",
-    cache_dir=DA.paths.datasets)
+tokenizer = AutoTokenizer.from_pretrained("t5-small", cache_dir=DA.paths.datasets)
+model = AutoModelForSeq2SeqLM.from_pretrained("t5-small", cache_dir=DA.paths.datasets)
 
 # COMMAND ----------
 
 # For summarization, T5-small expects a prefix "summarize: ", so we prepend that to each article as a prompt.
-articles = list(map(
-    lambda article: "summarize: " + article,
-    xsum_sample["document"]
-))
+articles = list(map(lambda article: "summarize: " + article, xsum_sample["document"]))
 display(pd.DataFrame(articles, columns=["prompts"]))
 
 # COMMAND ----------
 
 # Tokenize the input
-inputs = tokenizer(articles, max_length=1024, return_tensors="pt", padding=True, truncation=True)
+inputs = tokenizer(
+    articles, max_length=1024, return_tensors="pt", padding=True, truncation=True
+)
 print("input_ids:")
-print(inputs['input_ids'])
+print(inputs["input_ids"])
 print("attention_mask:")
-print(inputs['attention_mask'])
+print(inputs["attention_mask"])
 
 # COMMAND ----------
 
@@ -591,7 +617,10 @@ print(inputs['attention_mask'])
 summary_ids = model.generate(
     inputs.input_ids,
     attention_mask=inputs.attention_mask,
-    num_beams=2, min_length=0, max_length=40)
+    num_beams=2,
+    min_length=0,
+    max_length=40,
+)
 print(summary_ids)
 
 # COMMAND ----------
@@ -614,21 +643,24 @@ display(pd.DataFrame(decoded_summaries, columns=["decoded_summaries"]))
 
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
-tokenizer = T5Tokenizer.from_pretrained(
-    "t5-small",
-    cache_dir=DA.paths.datasets)
+tokenizer = T5Tokenizer.from_pretrained("t5-small", cache_dir=DA.paths.datasets)
 model = T5ForConditionalGeneration.from_pretrained(
-    "t5-small",
-    cache_dir=DA.paths.datasets)
+    "t5-small", cache_dir=DA.paths.datasets
+)
 
 # COMMAND ----------
 
 # The tokenizer and model can then be used similarly to how we used the ones loaded by the Auto* classes.
-inputs = tokenizer(articles, max_length=1024, return_tensors="pt", padding=True, truncation=True)
+inputs = tokenizer(
+    articles, max_length=1024, return_tensors="pt", padding=True, truncation=True
+)
 summary_ids = model.generate(
     inputs.input_ids,
     attention_mask=inputs.attention_mask,
-    num_beams=2, min_length=0, max_length=40)
+    num_beams=2,
+    min_length=0,
+    max_length=40,
+)
 decoded_summaries = tokenizer.batch_decode(summary_ids, skip_special_tokens=True)
 
 display(pd.DataFrame(decoded_summaries, columns=["decoded_summaries"]))

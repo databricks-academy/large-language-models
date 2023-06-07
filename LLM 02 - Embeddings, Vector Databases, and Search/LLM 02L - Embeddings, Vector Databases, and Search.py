@@ -46,10 +46,11 @@ display(dais_pdf)
 
 # COMMAND ----------
 
-dais_pdf["full_text"] = dais_pdf.apply(lambda row: f"""Title: {row["Title"]}
-                                                        Abstract:
-                                                        {row["Abstract"]}""".strip(), axis=1
-                                        )
+dais_pdf["full_text"] = dais_pdf.apply(
+    lambda row: f"""Title: {row["Title"]}
+                Abstract:  {row["Abstract"]}""".strip(),
+    axis=1,
+)
 print(dais_pdf.iloc[0]["full_text"])
 
 # COMMAND ----------
@@ -69,10 +70,12 @@ for i, row in dais_pdf.iterrows():
 import chromadb
 from chromadb.config import Settings
 
-chroma_client = chromadb.Client(Settings(
-    chroma_db_impl="duckdb+parquet",
-    persist_directory=DA.paths.user_db # this is an optional argument. If you don't supply this, the data will be ephemeral
-))
+chroma_client = chromadb.Client(
+    Settings(
+        chroma_db_impl="duckdb+parquet",
+        persist_directory=DA.paths.user_db,  # this is an optional argument. If you don't supply this, the data will be ephemeral
+    )
+)
 
 # COMMAND ----------
 
@@ -82,11 +85,11 @@ chroma_client = chromadb.Client(Settings(
 
 # COMMAND ----------
 
-# TODO 
+# TODO
 collection_name = "<FILL_IN>"
 
-# If you have created the collection before, you need delete the collection first 
-if len(chroma_client.list_collections()) > 0 and collection_name in [chroma_client.list_collections()[0].name]: 
+# If you have created the collection before, you need to delete the collection first
+if len(chroma_client.list_collections()) > 0 and collection_name in [chroma_client.list_collections()[0].name]:
     chroma_client.delete_collection(name=collection_name)
 else:
     print(f"Creating collection: '{collection_name}'")
@@ -153,16 +156,16 @@ dbTestQuestion2_3(results)
 
 # COMMAND ----------
 
-# TODO 
+# TODO
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
-Pick a model from HuggingFace that can generate text 
+# Pick a model from HuggingFace that can generate text
 model_id = "<FILL_IN>"
 tokenizer = AutoTokenizer.from_pretrained(model_id)
 lm_model = AutoModelForCausalLM.from_pretrained(model_id)
 
 pipe = pipeline(
-    "<FILL_IN>", model=lm_model, tokenizer=tokenizer, max_new_tokens=512, device_map="auto"
+    "<FILL_IN>", model=lm_model, tokenizer=tokenizer, max_new_tokens=512, device_map="auto", handle_long_generation="hole"
 )
 
 # COMMAND ----------
@@ -180,17 +183,17 @@ dbTestQuestion2_4(pipe)
 
 # COMMAND ----------
 
-# TODO 
-Come up with a question that you need the LLM assistant to help you with 
-A sample question is "Help me find sessions related to XYZ"
+# TODO
+# Come up with a question that you need the LLM assistant to help you with
+# A sample question is "Help me find sessions related to XYZ"
 question = "<FILL_IN>"
 
-Provide all returned similar documents from the cell above below 
+# Provide all returned similar documents from the cell above below
 context = <FILL_IN>
 
-Feel free to be creative how you construct the prompt. You can use the demo notebook as a jumpstart reference. 
-You can also provide more requirements in the text how you want the answers to look like. 
-Example requirement: "Recommend top-5 relevant sessions for me to attend."
+# Feel free to be creative how you construct the prompt. You can use the demo notebook as a jumpstart reference.
+# You can also provide more requirements in the text how you want the answers to look like.
+# Example requirement: "Recommend top-5 relevant sessions for me to attend."
 prompt_template = <FILL_IN>
 
 # COMMAND ----------
@@ -210,7 +213,7 @@ dbTestQuestion2_5(question, context, prompt_template)
 
 # COMMAND ----------
 
-# TODO 
+# TODO
 lm_response = pipe(<FILL_IN>)
 print(lm_response[0]["generated_text"])
 
@@ -265,7 +268,7 @@ import tiktoken
 
 price_token = 0.002
 encoder = tiktoken.encoding_for_model("gpt-3.5-turbo")
-cost_to_run = len(encoder.encode(prompt_template))/1000 * price_token
+cost_to_run = len(encoder.encode(prompt_template)) / 1000 * price_token
 print(f"It would take roughly ${round(cost_to_run, 5)} to run this prompt")
 
 # COMMAND ----------
@@ -281,14 +284,14 @@ print(f"It would take roughly ${round(cost_to_run, 5)} to run this prompt")
 
 # COMMAND ----------
 
-# TODO 
+# TODO
 gpt35_response = openai.ChatCompletion.create(
     model="gpt-3.5-turbo",
     messages=[
         {"role": "system", "content": "You are a helpful assistant."},
         {"role": "user", "content": <FILL_IN>},
     ],
-    temperature=0, # 0 makes outputs deterministic; The closer the value is to 1, the more random the outputs are for each time you re-run. 
+    temperature=0, # 0 makes outputs deterministic; The closer the value is to 1, the more random the outputs are for each time you re-run.
 )
 
 # COMMAND ----------
@@ -319,7 +322,7 @@ gpt35_response["usage"]["total_tokens"]
 
 # MAGIC %md ## Submit your Results (edX Verified Only)
 # MAGIC
-# MAGIC To get credit for this lab, click the submit button to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
+# MAGIC To get credit for this lab, click the submit button in the top right to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
 
 # COMMAND ----------
 

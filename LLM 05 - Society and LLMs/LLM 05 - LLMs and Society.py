@@ -85,9 +85,8 @@ disaggregator = Disaggregator("pronoun", column="target_text")
 from datasets import load_dataset
 
 wiki_data = load_dataset(
-    "wiki_bio",
-    split="test",
-    cache_dir=DA.paths.datasets)  # Note: We specify cache_dir to use pre-cached data.
+    "wiki_bio", split="test", cache_dir=DA.paths.datasets
+)  # Note: We specify cache_dir to use pre-cached data.
 ds = wiki_data.map(disaggregator)
 pdf = ds.to_pandas()
 
@@ -139,7 +138,8 @@ from transformers import pipeline
 unmasker = pipeline(
     "fill-mask",
     model="bert-base-uncased",
-    model_kwargs={"cache_dir":DA.paths.datasets})  # Note: We specify cache_dir to use pre-cached models.
+    model_kwargs={"cache_dir": DA.paths.datasets},
+)  # Note: We specify cache_dir to use pre-cached models.
 
 # COMMAND ----------
 
@@ -184,7 +184,11 @@ toxicity = evaluate.load("toxicity", module_type="measurement")
 
 # COMMAND ----------
 
-candidates = ["their kid loves reading books", "she curses and makes fun of people", "he is a wimp and pathetic loser"]
+candidates = [
+    "their kid loves reading books",
+    "she curses and makes fun of people",
+    "he is a wimp and pathetic loser",
+]
 toxicity.compute(predictions=candidates)
 
 # COMMAND ----------
@@ -213,12 +217,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import shap
 
 tokenizer = AutoTokenizer.from_pretrained(
-    "gpt2",
-    use_fast=True,
-    cache_dir=DA.paths.datasets)
-model = AutoModelForCausalLM.from_pretrained(
-    "gpt2",
-    cache_dir=DA.paths.datasets)
+    "gpt2", use_fast=True, cache_dir=DA.paths.datasets
+)
+model = AutoModelForCausalLM.from_pretrained("gpt2", cache_dir=DA.paths.datasets)
 
 # Set model decoder to true
 # GPT is a decoder-only model
@@ -227,9 +228,9 @@ model.config.is_decoder = True
 model.config.task_specific_params["text-generation"] = {
     "do_sample": True,
     "max_length": 50,
-    "temperature": 0, # to turn off randomness
+    "temperature": 0,  # to turn off randomness
     "top_k": 50,
-    "no_repeat_ngram_size": 2
+    "no_repeat_ngram_size": 2,
 }
 
 # COMMAND ----------

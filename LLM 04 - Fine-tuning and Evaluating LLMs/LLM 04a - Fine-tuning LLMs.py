@@ -25,7 +25,7 @@
 
 # COMMAND ----------
 
-assert "gpu" in spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion"), "THIS NOTEBOOK REQUIRES THAT A GPU MACHINE AND RUNTIME IS UTILIZED."
+assert "gpu" in spark.conf.get("spark.databricks.clusterUsageTags.sparkVersion"), "THIS LAB REQUIRES THAT A GPU MACHINE AND RUNTIME IS UTILIZED."
 
 # COMMAND ----------
 
@@ -79,6 +79,7 @@ print(f"Working Directory: {DA.paths.working_dir}")
 # COMMAND ----------
 
 import tempfile
+
 tmpdir = tempfile.TemporaryDirectory()
 local_training_root = tmpdir.name
 
@@ -129,8 +130,8 @@ model_checkpoint = "t5-small"
 
 # load the tokenizer that was used for the t5-small model
 tokenizer = tr.AutoTokenizer.from_pretrained(
-    model_checkpoint,
-    cache_dir=DA.paths.datasets)  # Use a pre-cached model
+    model_checkpoint, cache_dir=DA.paths.datasets
+)  # Use a pre-cached model
 
 # COMMAND ----------
 
@@ -140,25 +141,37 @@ tokenizer = tr.AutoTokenizer.from_pretrained(
 
 # COMMAND ----------
 
-def to_tokens(tokenizer: tr.models.t5.tokenization_t5_fast.T5TokenizerFast, label_map: dict) -> callable:
-    """ 
-        Given a `tokenizer` this closure will iterate through `x` and return the result of `apply()`. 
-        This function is mapped to a dataset and returned with ids and attention mask.
+def to_tokens(
+    tokenizer: tr.models.t5.tokenization_t5_fast.T5TokenizerFast, label_map: dict
+) -> callable:
     """
-    
+    Given a `tokenizer` this closure will iterate through `x` and return the result of `apply()`.
+    This function is mapped to a dataset and returned with ids and attention mask.
+    """
+
     def apply(x) -> tr.tokenization_utils_base.BatchEncoding:
-        """ From a formatted dataset `x` a batch encoding `token_res` is created. """
+        """From a formatted dataset `x` a batch encoding `token_res` is created."""
         target_labels = [label_map[y] for y in x["label"]]
-        token_res = tokenizer(x["text"], text_target=target_labels, return_tensors="pt", truncation=True, padding=True)
+        token_res = tokenizer(
+            x["text"],
+            text_target=target_labels,
+            return_tensors="pt",
+            truncation=True,
+            padding=True,
+        )
         return token_res
+
     return apply
+
 
 imdb_label_lookup = {0: "negative", 1: "positive", -1: "unknown"}
 
 # COMMAND ----------
 
 imdb_to_tokens = to_tokens(tokenizer, imdb_label_lookup)
-tokenized_dataset = imdb_ds.map(imdb_to_tokens, batched=True, remove_columns=["text", "label"])
+tokenized_dataset = imdb_ds.map(
+    imdb_to_tokens, batched=True, remove_columns=["text", "label"]
+)
 
 # COMMAND ----------
 
@@ -171,11 +184,12 @@ tokenized_dataset = imdb_ds.map(imdb_to_tokens, batched=True, remove_columns=["t
 
 checkpoint_name = "test-trainer"
 local_checkpoint_path = os.path.join(local_training_root, checkpoint_name)
-training_args = tr.TrainingArguments(local_checkpoint_path,
-    num_train_epochs=1, # default number of epochs to train is 3
+training_args = tr.TrainingArguments(
+    local_checkpoint_path,
+    num_train_epochs=1,  # default number of epochs to train is 3
     per_device_train_batch_size=16,
     optim="adamw_torch",
-    report_to=["tensorboard"]
+    report_to=["tensorboard"],
 )
 
 # COMMAND ----------
@@ -187,14 +201,15 @@ training_args = tr.TrainingArguments(local_checkpoint_path,
 
 # load the pre-trained model
 model = tr.AutoModelForSeq2SeqLM.from_pretrained(
-    model_checkpoint,
-    cache_dir=DA.paths.datasets)  # Use a pre-cached model
+    model_checkpoint, cache_dir=DA.paths.datasets
+)  # Use a pre-cached model
 
 # COMMAND ----------
 
 # used to assist the trainer in batching the data
 data_collator = tr.DataCollatorWithPadding(tokenizer=tokenizer)
-trainer = tr.Trainer(model,
+trainer = tr.Trainer(
+    model,
     training_args,
     train_dataset=tokenized_dataset["train"],
     eval_dataset=tokenized_dataset["test"],
@@ -233,7 +248,7 @@ trainer.train()
 
 # save model to the local checkpoint
 trainer.save_model()
-trainer.save_state() 
+trainer.save_state()
 
 # COMMAND ----------
 
@@ -252,22 +267,29 @@ fine_tuned_model = tr.AutoModelForSeq2SeqLM.from_pretrained(final_model_path)
 
 # COMMAND ----------
 
-reviews = ["""
+reviews = [
+    """
 'Despicable Me' is a cute and funny movie, but the plot is predictable and the characters are not very well-developed. Overall, it's a good movie for kids, but adults might find it a bit boring.""",
-""" 'The Batman' is a dark and gritty take on the Caped Crusader, starring Robert Pattinson as Bruce Wayne. The film is a well-made crime thriller with strong performances and visuals, but it may be too slow-paced and violent for some viewers.
+    """ 'The Batman' is a dark and gritty take on the Caped Crusader, starring Robert Pattinson as Bruce Wayne. The film is a well-made crime thriller with strong performances and visuals, but it may be too slow-paced and violent for some viewers.
 """,
-"""
+    """
 The Phantom Menace is a visually stunning film with some great action sequences, but the plot is slow-paced and the dialogue is often wooden. It is a mixed bag that will appeal to some fans of the Star Wars franchise, but may disappoint others.
 """,
-"""
+    """
 I'm not sure if The Matrix and the two sequels were meant to have a tigh consistency but I don't think they quite fit together. They seem to have a reasonably solid arc but the features from the first aren't in the second and third as much, instead the second and third focus more on CGI battles and more visuals. I like them but for different reasons, so if I'm supposed to rate the trilogy I'm not sure what to say.
-"""]
+""",
+]
 inputs = tokenizer(reviews, return_tensors="pt", truncation=True, padding=True)
-pred = fine_tuned_model.generate(input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"])
+pred = fine_tuned_model.generate(
+    input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"]
+)
 
 # COMMAND ----------
 
-pdf = pd.DataFrame(zip(reviews, tokenizer.batch_decode(pred, skip_special_tokens=True)), columns=["review", "classification"])
+pdf = pd.DataFrame(
+    zip(reviews, tokenizer.batch_decode(pred, skip_special_tokens=True)),
+    columns=["review", "classification"],
+)
 display(pdf)
 
 # COMMAND ----------
@@ -312,16 +334,13 @@ os.environ["WORLD_SIZE"] = "1"
 zero_config = {
     "zero_optimization": {
         "stage": 2,
-        "offload_optimizer": {
-            "device": "cpu",
-            "pin_memory": True
-        },
+        "offload_optimizer": {"device": "cpu", "pin_memory": True},
         "allgather_partitions": True,
         "allgather_bucket_size": 5e8,
         "overlap_comm": True,
         "reduce_scatter": True,
         "reduce_bucket_size": 5e8,
-        "contiguous_gradients": True
+        "contiguous_gradients": True,
     },
     "optimizer": {
         "type": "AdamW",
@@ -330,21 +349,27 @@ zero_config = {
             "betas": "auto",
             "eps": "auto",
             "weight_decay": "auto",
-            "torch_adam": True
-        }
+            "torch_adam": True,
+        },
     },
-    "train_batch_size": "auto"
+    "train_batch_size": "auto",
 }
 
 # COMMAND ----------
 
 model_checkpoint = "t5-base"
-tokenizer = tr.AutoTokenizer.from_pretrained(model_checkpoint, cache_dir=DA.paths.datasets)
+tokenizer = tr.AutoTokenizer.from_pretrained(
+    model_checkpoint, cache_dir=DA.paths.datasets
+)
 
 imdb_to_tokens = to_tokens(tokenizer, imdb_label_lookup)
-tokenized_dataset = imdb_ds.map(imdb_to_tokens, batched=True, remove_columns=["text", "label"])
+tokenized_dataset = imdb_ds.map(
+    imdb_to_tokens, batched=True, remove_columns=["text", "label"]
+)
 
-model = tr.AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, cache_dir=DA.paths.datasets)
+model = tr.AutoModelForSeq2SeqLM.from_pretrained(
+    model_checkpoint, cache_dir=DA.paths.datasets
+)
 
 # COMMAND ----------
 
@@ -363,15 +388,17 @@ model = tr.AutoModelForSeq2SeqLM.from_pretrained(model_checkpoint, cache_dir=DA.
 
 checkpoint_name = "test-trainer-deepspeed"
 checkpoint_location = os.path.join(local_training_root, checkpoint_name)
-training_args = tr.TrainingArguments(checkpoint_location,
-    num_train_epochs=3, # default number of epochs to train is 3
+training_args = tr.TrainingArguments(
+    checkpoint_location,
+    num_train_epochs=3,  # default number of epochs to train is 3
     per_device_train_batch_size=8,
-    deepspeed=zero_config, # add the deepspeed configuration
+    deepspeed=zero_config,  # add the deepspeed configuration
     report_to=["tensorboard"],
 )
 
 data_collator = tr.DataCollatorWithPadding(tokenizer=tokenizer)
-trainer = tr.Trainer(model,
+trainer = tr.Trainer(
+    model,
     training_args,
     train_dataset=tokenized_dataset["train"],
     eval_dataset=tokenized_dataset["test"],
@@ -412,16 +439,22 @@ fine_tuned_model = tr.AutoModelForSeq2SeqLM.from_pretrained(final_model_path)
 
 # COMMAND ----------
 
-review = ["""
+review = [
+    """
            I'm not sure if The Matrix and the two sequels were meant to have a tight consistency but I don't think they quite fit together. They seem to have a reasonably solid arc but the features from the first aren't in the second and third as much, instead the second and third focus more on CGI battles and more visuals. I like them but for different reasons, so if I'm supposed to rate the trilogy I'm not sure what to say."""
-           ]
+]
 inputs = tokenizer(review, return_tensors="pt", truncation=True, padding=True)
 
-pred = fine_tuned_model.generate(input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"])
+pred = fine_tuned_model.generate(
+    input_ids=inputs["input_ids"], attention_mask=inputs["attention_mask"]
+)
 
 # COMMAND ----------
 
-pdf = pd.DataFrame(zip(review, tokenizer.batch_decode(pred, skip_special_tokens=True)), columns=["review", "classification"])
+pdf = pd.DataFrame(
+    zip(review, tokenizer.batch_decode(pred, skip_special_tokens=True)),
+    columns=["review", "classification"],
+)
 display(pdf)
 
 # COMMAND ----------

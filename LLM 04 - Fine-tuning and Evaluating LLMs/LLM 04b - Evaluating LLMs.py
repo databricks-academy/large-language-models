@@ -53,13 +53,17 @@ import torch
 from datasets import load_dataset
 
 full_dataset = load_dataset(
-    "cnn_dailymail",
-    version="3.0.0",
-    cache_dir=DA.paths.datasets)  # Note: We specify cache_dir to use pre-cached data.
+    "cnn_dailymail", version="3.0.0", cache_dir=DA.paths.datasets
+)  # Note: We specify cache_dir to use pre-cached data.
 
 # Use a small sample of the data during this lab, for speed.
 sample_size = 100
-sample = full_dataset["train"].filter(lambda r: 'CNN' in r["article"][:25]).shuffle(seed=42).select(range(sample_size))
+sample = (
+    full_dataset["train"]
+    .filter(lambda r: "CNN" in r["article"][:25])
+    .shuffle(seed=42)
+    .select(range(sample_size))
+)
 sample
 
 # COMMAND ----------
@@ -88,7 +92,7 @@ from transformers import AutoTokenizer, T5ForConditionalGeneration
 
 def batch_generator(data: list, batch_size: int):
     """
-        Creates batches of size `batch_size` from a list.
+    Creates batches of size `batch_size` from a list.
     """
     s = 0
     e = s + batch_size
@@ -97,14 +101,17 @@ def batch_generator(data: list, batch_size: int):
         s = e
         e = min(s + batch_size, len(data))
 
-def summarize_with_t5(model_checkpoint: str, articles: list, batch_size: int=8) -> list:
-    """
-        Compute summaries using a T5 model.
-        This is similar to a `pipeline` for a T5 model but does tokenization manually.
 
-        :param model_checkpoint: Name for a model checkpoint in Hugging Face, such as "t5-small" or "t5-base"
-        :param articles: List of strings, where each string represents one article.
-        :return: List of strings, where each string represents one article's generated summary
+def summarize_with_t5(
+    model_checkpoint: str, articles: list, batch_size: int = 8
+) -> list:
+    """
+    Compute summaries using a T5 model.
+    This is similar to a `pipeline` for a T5 model but does tokenization manually.
+
+    :param model_checkpoint: Name for a model checkpoint in Hugging Face, such as "t5-small" or "t5-base"
+    :param articles: List of strings, where each string represents one article.
+    :return: List of strings, where each string represents one article's generated summary
     """
     if torch.cuda.is_available():
         device = "cuda:0"
@@ -112,27 +119,24 @@ def summarize_with_t5(model_checkpoint: str, articles: list, batch_size: int=8) 
         device = "cpu"
 
     model = T5ForConditionalGeneration.from_pretrained(
-        model_checkpoint,
-        cache_dir=DA.paths.datasets
+        model_checkpoint, cache_dir=DA.paths.datasets
     ).to(device)
     tokenizer = AutoTokenizer.from_pretrained(
-        model_checkpoint,
-        model_max_length=1024,
-        cache_dir=DA.paths.datasets)
+        model_checkpoint, model_max_length=1024, cache_dir=DA.paths.datasets
+    )
 
     def perform_inference(batch: list) -> list:
         inputs = tokenizer(
-            batch,
-            max_length=1024,
-            return_tensors="pt",
-            padding=True,
-            truncation=True
-            )
+            batch, max_length=1024, return_tensors="pt", padding=True, truncation=True
+        )
 
         summary_ids = model.generate(
             inputs.input_ids.to(device),
             attention_mask=inputs.attention_mask.to(device),
-            num_beams=2, min_length=0, max_length=40)
+            num_beams=2,
+            min_length=0,
+            max_length=40,
+        )
         return tokenizer.batch_decode(summary_ids, skip_special_tokens=True)
 
     res = []
@@ -153,7 +157,7 @@ def summarize_with_t5(model_checkpoint: str, articles: list, batch_size: int=8) 
 
 # COMMAND ----------
 
-t5_small_summaries= summarize_with_t5("t5-small", sample["article"])
+t5_small_summaries = summarize_with_t5("t5-small", sample["article"])
 
 # COMMAND ----------
 
@@ -161,10 +165,14 @@ reference_summaries = sample["highlights"]
 
 # COMMAND ----------
 
-display(pd.DataFrame.from_dict({
-    "generated" : t5_small_summaries,
-    "reference" : reference_summaries,
-}))
+display(
+    pd.DataFrame.from_dict(
+        {
+            "generated": t5_small_summaries,
+            "reference": reference_summaries,
+        }
+    )
+)
 
 # COMMAND ----------
 
@@ -206,7 +214,8 @@ print(f"Achieved accuracy {accuracy}!")
 import evaluate
 import nltk
 from nltk.tokenize import sent_tokenize
-nltk.download('punkt')
+
+nltk.download("punkt")
 
 rouge_score = evaluate.load("rouge")
 
@@ -218,26 +227,20 @@ rouge_score = evaluate.load("rouge")
 
 def compute_rouge_score(generated: list, reference: list) -> dict:
     """
-        Compute ROUGE scores on a batch of articles.
+    Compute ROUGE scores on a batch of articles.
 
-        This is a convenience function wrapping Hugging Face `rouge_score`,
-        which expects sentences to be separated by newlines.
+    This is a convenience function wrapping Hugging Face `rouge_score`,
+    which expects sentences to be separated by newlines.
 
-        :param generated: Summaries (list of strings) produced by the model
-        :param reference: Ground-truth summaries (list of strings) for comparison
+    :param generated: Summaries (list of strings) produced by the model
+    :param reference: Ground-truth summaries (list of strings) for comparison
     """
-    generated_with_newlines = [
-        "\n".join(sent_tokenize(s.strip()))
-        for s in generated
-    ]
-    reference_with_newlines = [
-        "\n".join(sent_tokenize(s.strip()))
-        for s in reference
-    ]
+    generated_with_newlines = ["\n".join(sent_tokenize(s.strip())) for s in generated]
+    reference_with_newlines = ["\n".join(sent_tokenize(s.strip())) for s in reference]
     return rouge_score.compute(
         predictions=generated_with_newlines,
         references=reference_with_newlines,
-        use_stemmer=True
+        use_stemmer=True,
     )
 
 # COMMAND ----------
@@ -259,7 +262,7 @@ compute_rouge_score(reference_summaries, reference_summaries)
 # And what if we fail to predict anything?
 compute_rouge_score(
     generated=["" for _ in range(len(reference_summaries))],
-    reference=reference_summaries
+    reference=reference_summaries,
 )
 
 # COMMAND ----------
@@ -273,7 +276,7 @@ compute_rouge_score(
 rouge_score.compute(
     predictions=["Large language models beat world record"],
     references=["Large language models beating world records"],
-    use_stemmer=False
+    use_stemmer=False,
 )
 
 # COMMAND ----------
@@ -281,7 +284,7 @@ rouge_score.compute(
 rouge_score.compute(
     predictions=["Large language models beat world record"],
     references=["Large language models beating world records"],
-    use_stemmer=True
+    use_stemmer=True,
 )
 
 # COMMAND ----------
@@ -294,7 +297,7 @@ rouge_score.compute(
 rouge_score.compute(
     predictions=["Large language models beat world record"],
     references=["Large"],
-    use_stemmer=True
+    use_stemmer=True,
 )
 
 # COMMAND ----------
@@ -303,7 +306,7 @@ rouge_score.compute(
 rouge_score.compute(
     predictions=["Large"],
     references=["Large language models beat world record"],
-    use_stemmer=True
+    use_stemmer=True,
 )
 
 # COMMAND ----------
@@ -312,7 +315,7 @@ rouge_score.compute(
 rouge_score.compute(
     predictions=["Large language"],
     references=["Large language models beat world record"],
-    use_stemmer=True
+    use_stemmer=True,
 )
 
 # COMMAND ----------
@@ -321,7 +324,7 @@ rouge_score.compute(
 rouge_score.compute(
     predictions=["Models beat large language world record"],
     references=["Large language models beat world record"],
-    use_stemmer=True
+    use_stemmer=True,
 )
 
 # COMMAND ----------
@@ -332,25 +335,26 @@ rouge_score.compute(
 
 # COMMAND ----------
 
-def compute_rouge_per_row(generated_summaries: list, reference_summaries: list) -> pd.DataFrame:
+def compute_rouge_per_row(
+    generated_summaries: list, reference_summaries: list
+) -> pd.DataFrame:
     """
-        Generates a dataframe to compare rogue score metrics.
+    Generates a dataframe to compare rogue score metrics.
     """
     generated_with_newlines = [
-        "\n".join(sent_tokenize(s.strip()))
-        for s in generated_summaries
+        "\n".join(sent_tokenize(s.strip())) for s in generated_summaries
     ]
     reference_with_newlines = [
-        "\n".join(sent_tokenize(s.strip()))
-        for s in reference_summaries
+        "\n".join(sent_tokenize(s.strip())) for s in reference_summaries
     ]
     scores = rouge_score.compute(
         predictions=generated_with_newlines,
         references=reference_with_newlines,
         use_stemmer=True,
-        use_aggregator=False)
-    scores['generated'] = generated_summaries
-    scores['reference'] = reference_summaries
+        use_aggregator=False,
+    )
+    scores["generated"] = generated_summaries
+    scores["reference"] = reference_summaries
     return pd.DataFrame.from_dict(scores)
 
 # COMMAND ----------
@@ -368,7 +372,9 @@ compute_rouge_score(t5_small_summaries, reference_summaries)
 
 # COMMAND ----------
 
-t5_small_results = compute_rouge_per_row(generated_summaries=t5_small_summaries, reference_summaries=reference_summaries)
+t5_small_results = compute_rouge_per_row(
+    generated_summaries=t5_small_summaries, reference_summaries=reference_summaries
+)
 display(t5_small_results)
 
 # COMMAND ----------
@@ -379,12 +385,16 @@ display(t5_small_results)
 
 # COMMAND ----------
 
-t5_base_summaries = summarize_with_t5(model_checkpoint="t5-base", articles=sample["article"])
+t5_base_summaries = summarize_with_t5(
+    model_checkpoint="t5-base", articles=sample["article"]
+)
 compute_rouge_score(t5_base_summaries, reference_summaries)
 
 # COMMAND ----------
 
-t5_base_results = compute_rouge_per_row(generated_summaries=t5_base_summaries, reference_summaries=reference_summaries)
+t5_base_results = compute_rouge_per_row(
+    generated_summaries=t5_base_summaries, reference_summaries=reference_summaries
+)
 display(t5_base_results)
 
 # COMMAND ----------
@@ -397,17 +407,20 @@ display(t5_base_results)
 
 from transformers import GPT2LMHeadModel, GPT2Tokenizer
 
-def summarize_with_gpt2(model_checkpoint: str, articles: list, batch_size: int=8) -> list:
-    """
-        Convenience function for summarization with GPT2 to handle these complications:
-        - Append "TL;DR" to the end of the input to get GPT2 to generate a summary.
-        https://huggingface.co/course/chapter7/5?fw=pt
-        - Truncate input to handle long articles.
-        - GPT2 uses a max token length of 1024.  We use a shorter 512 limit here.
 
-        :param model_checkpoint: reference to checkpointed model
-        :param articles: list of strings
-        :return: generated summaries, with the input and "TL;DR" removed
+def summarize_with_gpt2(
+    model_checkpoint: str, articles: list, batch_size: int = 8
+) -> list:
+    """
+    Convenience function for summarization with GPT2 to handle these complications:
+    - Append "TL;DR" to the end of the input to get GPT2 to generate a summary.
+    https://huggingface.co/course/chapter7/5?fw=pt
+    - Truncate input to handle long articles.
+    - GPT2 uses a max token length of 1024.  We use a shorter 512 limit here.
+
+    :param model_checkpoint: reference to checkpointed model
+    :param articles: list of strings
+    :return: generated summaries, with the input and "TL;DR" removed
     """
     if torch.cuda.is_available():
         device = "cuda:0"
@@ -415,38 +428,36 @@ def summarize_with_gpt2(model_checkpoint: str, articles: list, batch_size: int=8
         device = "cpu"
 
     tokenizer = GPT2Tokenizer.from_pretrained(
-        model_checkpoint,
-        padding_side="left",
-        cache_dir=DA.paths.datasets)
-    tokenizer.add_special_tokens({'pad_token':tokenizer.eos_token})
+        model_checkpoint, padding_side="left", cache_dir=DA.paths.datasets
+    )
+    tokenizer.add_special_tokens({"pad_token": tokenizer.eos_token})
     model = GPT2LMHeadModel.from_pretrained(
         model_checkpoint,
         pad_token_id=tokenizer.eos_token_id,
-        cache_dir=DA.paths.datasets
+        cache_dir=DA.paths.datasets,
     ).to(device)
 
     def perform_inference(batch: list) -> list:
         tmp_inputs = tokenizer(
-            batch,
-            max_length=500,
-            return_tensors="pt",
-            padding=True,
-            truncation=True)
+            batch, max_length=500, return_tensors="pt", padding=True, truncation=True
+        )
         tmp_inputs_decoded = tokenizer.batch_decode(
-            tmp_inputs.input_ids,
-            skip_special_tokens=True)
+            tmp_inputs.input_ids, skip_special_tokens=True
+        )
         inputs = tokenizer(
             [article + " TL;DR:" for article in tmp_inputs_decoded],
             max_length=512,
             return_tensors="pt",
             padding=True,
-            truncation=True)
+            truncation=True,
+        )
         summary_ids = model.generate(
             inputs.input_ids.to(device),
             attention_mask=inputs.attention_mask.to(device),
             num_beams=2,
             min_length=0,
-            max_length=512+32)
+            max_length=512 + 32,
+        )
         return tokenizer.batch_decode(summary_ids, skip_special_tokens=True)
 
     decoded_summaries = []
@@ -457,9 +468,11 @@ def summarize_with_gpt2(model_checkpoint: str, articles: list, batch_size: int=8
         torch.cuda.empty_cache()
         gc.collect()
 
-
     # post-process decoded summaries
-    summaries = [summary[summary.find("TL;DR:")+len("TL;DR: "):] for summary in decoded_summaries]
+    summaries = [
+        summary[summary.find("TL;DR:") + len("TL;DR: ") :]
+        for summary in decoded_summaries
+    ]
 
     # cleanup
     del tokenizer
@@ -471,12 +484,16 @@ def summarize_with_gpt2(model_checkpoint: str, articles: list, batch_size: int=8
 
 # COMMAND ----------
 
-gpt2_summaries = summarize_with_gpt2(model_checkpoint="gpt2", articles=sample["article"])
+gpt2_summaries = summarize_with_gpt2(
+    model_checkpoint="gpt2", articles=sample["article"]
+)
 compute_rouge_score(gpt2_summaries, reference_summaries)
 
 # COMMAND ----------
 
-gpt2_results = compute_rouge_per_row(generated_summaries=gpt2_summaries, reference_summaries=reference_summaries)
+gpt2_results = compute_rouge_per_row(
+    generated_summaries=gpt2_summaries, reference_summaries=reference_summaries
+)
 display(gpt2_results)
 
 # COMMAND ----------
@@ -489,51 +506,65 @@ display(gpt2_results)
 
 def compare_models(models_results: dict) -> pd.DataFrame:
     """
-        :param models_results: dict of "model name" string mapped to pd.DataFrame of results computed by `compute_rouge_per_row`
-        :return: pd.DataFrame with 1 row per model, with columns: model, rouge1, rouge2, rougeL, rougeLsum
-        where metrics are averages over input results for each model
+    :param models_results: dict of "model name" string mapped to pd.DataFrame of results computed by `compute_rouge_per_row`
+    :return: pd.DataFrame with 1 row per model, with columns: model, rouge1, rouge2, rougeL, rougeLsum
+    where metrics are averages over input results for each model
     """
     agg_results = []
     for r in models_results:
-        model_results = models_results[r].drop(labels=["generated", "reference"], axis=1)
+        model_results = models_results[r].drop(
+            labels=["generated", "reference"], axis=1
+        )
         agg_metrics = [r]
         agg_metrics[1:] = model_results.mean(axis=0)
         agg_results.append(agg_metrics)
-    return pd.DataFrame(agg_results, columns=["model", "rouge1", "rouge2", "rougeL", "rougeLsum"])
+    return pd.DataFrame(
+        agg_results, columns=["model", "rouge1", "rouge2", "rougeL", "rougeLsum"]
+    )
 
 # COMMAND ----------
 
-display(compare_models({
-    "t5-small": t5_small_results,
-    "t5-base": t5_base_results,
-    "gpt2": gpt2_results,
-}))
+display(
+    compare_models(
+        {
+            "t5-small": t5_small_results,
+            "t5-base": t5_base_results,
+            "gpt2": gpt2_results,
+        }
+    )
+)
 
 # COMMAND ----------
 
 def compare_models_summaries(models_summaries: dict) -> pd.DataFrame:
     """
-        Aggregates results from `models_summaries` and returns a dataframe.
+    Aggregates results from `models_summaries` and returns a dataframe.
     """
     comparison_df = None
     for model_name in models_summaries:
         summaries_df = models_summaries[model_name]
         if comparison_df is None:
-            comparison_df = summaries_df[["generated"]].rename({"generated":model_name}, axis=1)
+            comparison_df = summaries_df[["generated"]].rename(
+                {"generated": model_name}, axis=1
+            )
         else:
             comparison_df = comparison_df.join(
-                summaries_df[["generated"]].rename({"generated":model_name}, axis=1)
+                summaries_df[["generated"]].rename({"generated": model_name}, axis=1)
             )
     return comparison_df
 
 # COMMAND ----------
 
 # In the output table below, scroll to the right to see all models.
-display(compare_models_summaries({
-    "t5_small": t5_small_results,
-    "t5_base": t5_base_results,
-    "gpt2": gpt2_results,
-}))
+display(
+    compare_models_summaries(
+        {
+            "t5_small": t5_small_results,
+            "t5_base": t5_base_results,
+            "gpt2": gpt2_results,
+        }
+    )
+)
 
 # COMMAND ----------
 

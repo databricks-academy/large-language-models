@@ -72,7 +72,7 @@
 # COMMAND ----------
 
 # TODO
-Copy paste your tokens below
+# Copy paste your tokens below
 
 import os
 os.environ["HUGGINGFACEHUB_API_TOKEN"] = "<FILL IN>"
@@ -189,7 +189,7 @@ from better_profanity import profanity
 
 
 jekyll_chain = LLMChain(
-    llm=jekyll_llm, 
+    llm=jekyll_llm,
     prompt=jekyll_prompt_template,
     output_key="jekyll_said",
     verbose=False,
@@ -232,7 +232,7 @@ hyde_prompt_template = PromptTemplate(
 
 # hyde_llm=jekyll_llm
 # Uncomment the line below if you were to use OpenAI instead
-hyde_llm = OpenAI(model="text-davinci-003")     
+hyde_llm = OpenAI(model="text-davinci-003")
 
 # -----------------------------------
 # -----------------------------------
@@ -300,7 +300,7 @@ from langchain.llms import OpenAI
 # For OpenAI we'll use the default model for DaScie
 llm = OpenAI()
 tools = load_tools(["wikipedia", "serpapi", "python_repl", "terminal"], llm=llm)
-# We now create DaScie using the "initialize_agent" command. 
+# We now create DaScie using the "initialize_agent" command.
 dascie = initialize_agent(
     tools, llm, agent=AgentType.ZERO_SHOT_REACT_DESCRIPTION, verbose=True
 )
@@ -354,7 +354,7 @@ dascie.run("Analyze this data, tell me any interesting trends. Make some pretty 
 # Not bad! Now for something even more complex.... can we get out LLM model do some ML!?
 dascie.run(
     "Train a random forest regressor to predict salary using the most important features. Show me the what variables are most influential to this model"
-    )
+)
 
 # COMMAND ----------
 

@@ -72,9 +72,8 @@ from transformers import pipeline
 # COMMAND ----------
 
 xsum_dataset = load_dataset(
-    "xsum",
-    version="1.2.0",
-    cache_dir=DA.paths.datasets)  # Note: We specify cache_dir to use pre-cached data.
+    "xsum", version="1.2.0", cache_dir=DA.paths.datasets
+)  # Note: We specify cache_dir to use pre-cached data.
 xsum_sample = xsum_dataset["train"].select(range(10))
 display(xsum_sample.to_pandas())
 
@@ -103,10 +102,10 @@ from transformers import pipeline
 # Later, we plan to log all of these parameters to MLflow.
 # Storing them as variables here will help with that.
 hf_model_name = "t5-small"
-min_length=20
-max_length=40
-truncation=True
-do_sample=True
+min_length = 20
+max_length = 40
+truncation = True
+do_sample = True
 
 summarizer = pipeline(
     task="summarization",
@@ -115,7 +114,8 @@ summarizer = pipeline(
     max_length=max_length,
     truncation=truncation,
     do_sample=do_sample,
-    model_kwargs={"cache_dir":DA.paths.datasets})  # Note: We specify cache_dir to use pre-cached models.
+    model_kwargs={"cache_dir": DA.paths.datasets},
+)  # Note: We specify cache_dir to use pre-cached models.
 
 # COMMAND ----------
 
@@ -169,13 +169,15 @@ mlflow.set_experiment(f"/Users/{DA.username}/LLM 06 - MLflow experiment")
 
 with mlflow.start_run():
     # LOG PARAMS
-    mlflow.log_params({
-        "hf_model_name": hf_model_name,
-        "min_length": min_length,
-        "max_length": max_length,
-        "truncation": truncation,
-        "do_sample": do_sample,
-    })
+    mlflow.log_params(
+        {
+            "hf_model_name": hf_model_name,
+            "min_length": min_length,
+            "max_length": max_length,
+            "truncation": truncation,
+            "do_sample": do_sample,
+        }
+    )
 
     # --------------------------------
     # LOG INPUTS (QUERIES) AND OUTPUTS
@@ -183,7 +185,11 @@ with mlflow.start_run():
     results_list = [r["summary_text"] for r in results]
 
     # Our LLM pipeline does not have prompts separate from inputs, so we do not log any prompts.
-    mlflow.llm.log_predictions(inputs=xsum_sample["document"], outputs=results_list, prompts=["" for _ in results_list])
+    mlflow.llm.log_predictions(
+        inputs=xsum_sample["document"],
+        outputs=results_list,
+        prompts=["" for _ in results_list],
+    )
 
     # ---------
     # LOG MODEL
@@ -383,14 +389,17 @@ display(prod_data)
 prod_model_udf = mlflow.pyfunc.spark_udf(
     spark,
     model_uri=f"models:/{model_name}/Production",
-    env_manager="local", 
-    result_type="string")
+    env_manager="local",
+    result_type="string",
+)
 
 # COMMAND ----------
 
 # Run inference by appending a new column to the DataFrame
 
-batch_inference_results = prod_data.withColumn("generated_summary", prod_model_udf("document"))
+batch_inference_results = prod_data.withColumn(
+    "generated_summary", prod_model_udf("document")
+)
 display(batch_inference_results)
 
 # COMMAND ----------
@@ -399,8 +408,12 @@ display(batch_inference_results)
 
 # COMMAND ----------
 
-inference_results_path = f"{DA.paths.working_dir}/m6-inference-results".replace("/dbfs", "dbfs:")
-batch_inference_results.write.format("delta").mode("append").save(inference_results_path)
+inference_results_path = f"{DA.paths.working_dir}/m6-inference-results".replace(
+    "/dbfs", "dbfs:"
+)
+batch_inference_results.write.format("delta").mode("append").save(
+    inference_results_path
+)
 
 # COMMAND ----------
 

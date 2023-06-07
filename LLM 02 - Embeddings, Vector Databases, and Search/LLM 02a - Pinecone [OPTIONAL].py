@@ -58,7 +58,7 @@
 
 # COMMAND ----------
 
-# TODO 
+# TODO
 import os
 
 os.environ["PINECONE_API_KEY"] = "<FILL IN>"
@@ -67,7 +67,7 @@ os.environ["PINECONE_ENV"] = "<FILL IN>"
 # COMMAND ----------
 
 import pinecone
-    
+
 pinecone_api_key = os.environ["PINECONE_API_KEY"]
 pinecone_env = os.environ["PINECONE_ENV"]
 
@@ -77,13 +77,17 @@ pinecone.init(api_key=pinecone_api_key, environment=pinecone_env)
 
 import pyspark.sql.functions as F
 
-df = (spark.read
-      .option("header", True)
-      .option("sep", ";")
-      .format("csv")
-      .load(f"{DA.paths.datasets}/news/labelled_newscatcher_dataset.csv".replace("/dbfs", "dbfs:"))
-      .withColumn("id", F.expr("uuid()"))
-      )
+df = (
+    spark.read.option("header", True)
+    .option("sep", ";")
+    .format("csv")
+    .load(
+        f"{DA.paths.datasets}/news/labelled_newscatcher_dataset.csv".replace(
+            "/dbfs", "dbfs:"
+        )
+    )
+    .withColumn("id", F.expr("uuid()"))
+)
 display(df)
 
 # COMMAND ----------
@@ -120,8 +124,8 @@ from sentence_transformers import SentenceTransformer
 
 # We will use embeddings from this model to apply to our data
 model = SentenceTransformer(
-    "all-MiniLM-L6-v2",
-    cache_folder=DA.paths.datasets)  # Use a pre-cached model
+    "all-MiniLM-L6-v2", cache_folder=DA.paths.datasets
+)  # Use a pre-cached model
 
 # COMMAND ----------
 
@@ -133,7 +137,7 @@ model = SentenceTransformer(
 pinecone_index_name = "news"
 
 if pinecone_index_name in pinecone.list_indexes():
-   pinecone.delete_index(pinecone_index_name)
+    pinecone.delete_index(pinecone_index_name)
 
 # COMMAND ----------
 
@@ -149,7 +153,7 @@ if pinecone_index_name not in pinecone.list_indexes():
     pinecone.create_index(
         name=pinecone_index_name,
         dimension=model.get_sentence_embedding_dimension(),
-        metric="cosine"
+        metric="cosine",
     )
 
 # now connect to the index
@@ -170,13 +174,13 @@ batch_size = 1000
 
 for i in tqdm(range(0, len(pdf["title"]), batch_size)):
     # find end of batch
-    i_end = min(i+batch_size, len(pdf["title"]))
+    i_end = min(i + batch_size, len(pdf["title"]))
     # create IDs batch
     ids = [str(x) for x in range(i, i_end)]
     # create metadata batch
     metadata = [{"title": title} for title in pdf["title"][i:i_end]]
     # create embeddings
-    embedding_title_batch = model.encode(pdf["title"][i:i_end]).tolist() 
+    embedding_title_batch = model.encode(pdf["title"][i:i_end]).tolist()
     # create records list for upsert
     records = zip(ids, embedding_title_batch, metadata)
     # upsert to Pinecone
@@ -202,7 +206,7 @@ pinecone_answer = pinecone_index.query(user_query, top_k=3, include_metadata=Tru
 
 for result in pinecone_answer["matches"]:
     print(f"{round(result['score'], 2)}, {result['metadata']['title']}")
-    print("-"*120)
+    print("-" * 120)
 
 # COMMAND ----------
 
@@ -231,23 +235,26 @@ from sentence_transformers import SentenceTransformer
 from typing import Iterator
 
 @pandas_udf("array<float>")
-def create_embeddings_with_transformers(sentences: Iterator[pd.Series]) -> Iterator[pd.Series]:
-  model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-  for batch in sentences:
-    yield pd.Series(model.encode(batch).tolist())
+def create_embeddings_with_transformers(
+    sentences: Iterator[pd.Series],
+) -> Iterator[pd.Series]:
+    model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
+    for batch in sentences:
+        yield pd.Series(model.encode(batch).tolist())
 
 # COMMAND ----------
 
 import pyspark.sql.functions as F
 
 transformer_type = "sentence-transformers/all-MiniLM-L6-v2"
-embedding_spark_df = (df.limit(1000)
-                      .withColumn("vector", create_embeddings_with_transformers("title"))
-                      .withColumn("namespace", F.lit(transformer_type))
-                      .withColumn("metadata", F.to_json(F.struct(F.col("topic").alias("TOPIC"))))
-                      # We select these columns because they are expected by the Spark-Pinecone connector
-                      .select("id", "vector", "namespace", "metadata") 
-                      )
+embedding_spark_df = (
+    df.limit(1000)
+    .withColumn("vector", create_embeddings_with_transformers("title"))
+    .withColumn("namespace", F.lit(transformer_type))
+    .withColumn("metadata", F.to_json(F.struct(F.col("topic").alias("TOPIC"))))
+    # We select these columns because they are expected by the Spark-Pinecone connector
+    .select("id", "vector", "namespace", "metadata")
+)
 display(embedding_spark_df)
 
 # COMMAND ----------
@@ -262,7 +269,7 @@ display(embedding_spark_df)
 pinecone_index_name = "news"
 
 if pinecone_index_name in pinecone.list_indexes():
-   pinecone.delete_index(pinecone_index_name)
+    pinecone.delete_index(pinecone_index_name)
 
 # only create index if it doesn't exist
 model = SentenceTransformer(transformer_type)
@@ -270,7 +277,7 @@ if pinecone_index_name not in pinecone.list_indexes():
     pinecone.create_index(
         name=pinecone_index_name,
         dimension=model.get_sentence_embedding_dimension(),
-        metric="cosine"
+        metric="cosine",
     )
 
 # now connect to the index
@@ -286,8 +293,7 @@ pinecone_index = pinecone.Index(pinecone_index_name)
 # COMMAND ----------
 
 (
-    embedding_spark_df.write
-    .option("pinecone.apiKey", pinecone_api_key)
+    embedding_spark_df.write.option("pinecone.apiKey", pinecone_api_key)
     .option("pinecone.environment", pinecone_env)
     .option("pinecone.projectName", pinecone.whoami().projectname)
     .option("pinecone.indexName", pinecone_index_name)

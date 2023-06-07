@@ -60,9 +60,8 @@ from transformers import pipeline
 # COMMAND ----------
 
 xsum_dataset = load_dataset(
-    "xsum",
-    version="1.2.0",
-    cache_dir=DA.paths.datasets)  # Note: We specify cache_dir to use predownloaded data.
+    "xsum", version="1.2.0", cache_dir=DA.paths.datasets
+)  # Note: We specify cache_dir to use predownloaded data.
 xsum_sample = xsum_dataset["train"].select(range(10))
 display(xsum_sample.to_pandas())
 
@@ -94,8 +93,12 @@ dbTestQuestion1_1(summarizer, summarization_results, xsum_sample["document"])
 import pandas as pd
 
 display(
-    pd.DataFrame.from_dict(summarization_results).rename({"summary_text":"generated_summary"},axis=1).join(
-        pd.DataFrame.from_dict(xsum_sample))[["generated_summary", "summary", "document"]])
+    pd.DataFrame.from_dict(summarization_results)
+    .rename({"summary_text": "generated_summary"}, axis=1)
+    .join(pd.DataFrame.from_dict(xsum_sample))[
+        ["generated_summary", "summary", "document"]
+    ]
+)
 
 # COMMAND ----------
 
@@ -113,11 +116,15 @@ jpn_dataset = load_dataset(
     "Helsinki-NLP/tatoeba_mt",
     version="1.0.0",
     language_pair="eng-jpn",
-    cache_dir=DA.paths.datasets)
-jpn_sample = jpn_dataset["test"].select(range(10))\
-    .rename_column("sourceString", "English")\
-    .rename_column("targetString", "Japanese")\
+    cache_dir=DA.paths.datasets,
+)
+jpn_sample = (
+    jpn_dataset["test"]
+    .select(range(10))
+    .rename_column("sourceString", "English")
+    .rename_column("targetString", "Japanese")
     .remove_columns(["sourceLang", "targetlang"])
+)
 display(jpn_sample.to_pandas())
 
 # COMMAND ----------
@@ -202,7 +209,8 @@ few_shot_pipeline = pipeline(
     task="text-generation",
     model="EleutherAI/gpt-neo-1.3B",
     max_new_tokens=50,
-    model_kwargs={"cache_dir": DA.paths.datasets})  # Use a predownloaded model
+    model_kwargs={"cache_dir": DA.paths.datasets},
+)  # Use a predownloaded model
 
 # Get the token ID for "###", which we will use as the EOS token below.  (Recall we did this in the demo notebook.)
 eos_token_id = few_shot_pipeline.tokenizer.encode("###")[0]
@@ -217,7 +225,7 @@ eos_token_id = few_shot_pipeline.tokenizer.encode("###")[0]
 
 # TODO
 
-Fill in this template.
+# Fill in this template.
 
 prompt =\
 """<High-level instruction about the task>:
@@ -235,13 +243,13 @@ prompt =\
 
 results = few_shot_pipeline(prompt, do_sample=True, eos_token_id=eos_token_id)
 
-print(results[0]['generated_text'])
+print(results[0]["generated_text"])
 
 # COMMAND ----------
 
 # Test your answer. DO NOT MODIFY THIS CELL.
 
-dbTestQuestion1_3(few_shot_pipeline, prompt, results[0]['generated_text'])
+dbTestQuestion1_3(few_shot_pipeline, prompt, results[0]["generated_text"])
 
 # COMMAND ----------
 
@@ -257,31 +265,23 @@ dbTestQuestion1_3(few_shot_pipeline, prompt, results[0]['generated_text'])
 
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
-xsum_dataset = load_dataset(
-    "xsum",
-    version="1.2.0",
-    cache_dir=DA.paths.datasets)
+xsum_dataset = load_dataset("xsum", version="1.2.0", cache_dir=DA.paths.datasets)
 xsum_sample = xsum_dataset["train"].select(range(10))
 
-tokenizer = T5Tokenizer.from_pretrained(
-    "t5-small",
-    cache_dir=DA.paths.datasets)
+tokenizer = T5Tokenizer.from_pretrained("t5-small", cache_dir=DA.paths.datasets)
 model = T5ForConditionalGeneration.from_pretrained(
-    "t5-small",
-    cache_dir=DA.paths.datasets)
+    "t5-small", cache_dir=DA.paths.datasets
+)
 
 # Prepare articles for T5, which requires a "summarize: " prefix.
-articles = list(map(
-    lambda article: "summarize: " + article,
-    xsum_sample["document"]
-))
+articles = list(map(lambda article: "summarize: " + article, xsum_sample["document"]))
 
 # COMMAND ----------
 
 def display_summaries(decoded_summaries: list) -> None:
     """Helper method to display ground-truth and generated summaries side-by-side"""
     results_df = pd.DataFrame(zip(xsum_sample["summary"], decoded_summaries))
-    results_df.columns=["Summary", "Generated"]
+    results_df.columns = ["Summary", "Generated"]
     display(results_df)
 
 # COMMAND ----------
@@ -327,11 +327,8 @@ def display_summaries(decoded_summaries: list) -> None:
 #
 # We show all parameter settings for ease-of-modification, but in practice, you would only set relevant ones.
 inputs = tokenizer(
-    articles,
-    max_length=1024,
-    return_tensors="pt",
-    padding=True,
-    truncation=True)
+    articles, max_length=1024, return_tensors="pt", padding=True, truncation=True
+)
 
 summary_ids = model.generate(
     inputs.input_ids,
@@ -342,11 +339,10 @@ summary_ids = model.generate(
     max_length=40,
     top_k=20,
     top_p=0.5,
-    temperature=0.7)
+    temperature=0.7,
+)
 
-decoded_summaries = tokenizer.batch_decode(
-    summary_ids,
-    skip_special_tokens=True)
+decoded_summaries = tokenizer.batch_decode(summary_ids, skip_special_tokens=True)
 ##############################################################################
 
 display_summaries(decoded_summaries)
@@ -374,7 +370,7 @@ display_summaries(decoded_summaries)
 
 # MAGIC %md ## Submit your Results (edX Verified Only)
 # MAGIC
-# MAGIC To get credit for this lab, click the submit button to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
+# MAGIC To get credit for this lab, click the submit button in the top right to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
 
 # COMMAND ----------
 

@@ -53,6 +53,7 @@ print(f"Working Directory: {DA.paths.working_dir}")
 # COMMAND ----------
 
 import tempfile
+
 tmpdir = tempfile.TemporaryDirectory()
 local_training_root = tmpdir.name
 
@@ -66,7 +67,14 @@ local_training_root = tmpdir.name
 import os
 import pandas as pd
 from datasets import load_dataset
-from transformers import TrainingArguments, AutoTokenizer, AutoConfig, Trainer, AutoModelForCausalLM, DataCollatorForLanguageModeling
+from transformers import (
+    TrainingArguments,
+    AutoTokenizer,
+    AutoConfig,
+    Trainer,
+    AutoModelForCausalLM,
+    DataCollatorForLanguageModeling,
+)
 
 import evaluate
 import nltk
@@ -123,10 +131,12 @@ dbTestQuestion4_2(model_checkpoint)
 # COMMAND ----------
 
 # TODO
-load the tokenizer that was used for the model
+# load the tokenizer that was used for the model
 tokenizer = <FILL_IN>
 tokenizer.pad_token = tokenizer.eos_token
-tokenizer.add_special_tokens({"additional_special_tokens": ["### End", "### Instruction:", "### Response:\n"]})
+tokenizer.add_special_tokens(
+    {"additional_special_tokens": ["### End", "### Instruction:", "### Response:\n"]}
+)
 
 # COMMAND ----------
 
@@ -146,9 +156,11 @@ dbTestQuestion4_3(tokenizer)
 # COMMAND ----------
 
 remove_columns = ["instruction", "response", "context", "category"]
-def tokenize(x: dict, max_length: int=1024) -> dict:
+
+
+def tokenize(x: dict, max_length: int = 1024) -> dict:
     """
-        For a dictionary example of instruction, response, and context a dictionary of input_id and attention mask is returned
+    For a dictionary example of instruction, response, and context a dictionary of input_id and attention mask is returned
     """
     instr = x["instruction"]
     resp = x["response"]
@@ -225,7 +237,7 @@ dbTestQuestion4_5(training_args)
 # COMMAND ----------
 
 # TODO
-load the pre-trained model
+# load the pre-trained model
 model = <FILL_IN>
 
 # COMMAND ----------
@@ -246,10 +258,12 @@ dbTestQuestion4_6(model)
 # COMMAND ----------
 
 # TODO
-used to assist the trainer in batching the data
+# used to assist the trainer in batching the data
 TRAINING_SIZE=6000
 SEED=42
-data_collator = DataCollatorForLanguageModeling(tokenizer=tokenizer, mlm=False, return_tensors="pt", pad_to_multiple_of=8)
+data_collator = DataCollatorForLanguageModeling(
+    tokenizer=tokenizer, mlm=False, return_tensors="pt", pad_to_multiple_of=8
+)
 split_dataset = <FILL_IN>
 trainer = <FILL_IN>
 
@@ -287,12 +301,12 @@ tensorboard_display_dir = f"{local_checkpoint_path}/runs"
 # COMMAND ----------
 
 # TODO
-invoke training - note this will take approx. 30min
+# invoke training - note this will take approx. 30min
 <FILL_IN>
 
 # save model to the local checkpoint
 trainer.save_model()
-trainer.save_state() 
+trainer.save_state()
 
 # COMMAND ----------
 
@@ -325,7 +339,7 @@ fine_tuned_model = AutoModelForCausalLM.from_pretrained(final_model_path)
 
 # COMMAND ----------
 
-def to_prompt(instr: str, max_length: int=1024) -> dict:
+def to_prompt(instr: str, max_length: int = 1024) -> dict:
     text = f"""Below is an instruction that describes a task. Write a response that appropriately completes the request.
 
 ### Instruction:
@@ -334,6 +348,7 @@ def to_prompt(instr: str, max_length: int=1024) -> dict:
 ### Response:
 """
     return tokenizer(text, return_tensors="pt", max_length=max_length, truncation=True)
+
 
 def to_response(prediction):
     decoded = tokenizer.decode(prediction)
@@ -357,7 +372,12 @@ for i in range(100):
     instr = ds["train"][i]["instruction"]
     resp = ds["train"][i]["response"]
     inputs = to_prompt(instr)
-    pred = fine_tuned_model.generate(input_ids=inputs["input_ids"].to(device), attention_mask=inputs["attention_mask"].to(device), pad_token_id=tokenizer.pad_token_id, max_new_tokens=128 )
+    pred = fine_tuned_model.generate(
+        input_ids=inputs["input_ids"].to(device),
+        attention_mask=inputs["attention_mask"].to(device),
+        pad_token_id=tokenizer.pad_token_id,
+        max_new_tokens=128,
+    )
     res.append((instr, resp, to_response(pred[0])))
 
 # COMMAND ----------
@@ -385,9 +405,10 @@ display(pdf)
 
 # COMMAND ----------
 
-nltk.download('punkt')
+nltk.download("punkt")
 
 rouge_score = evaluate.load("rouge")
+
 
 def compute_rouge_score(generated, reference):
     """
@@ -399,18 +420,12 @@ def compute_rouge_score(generated, reference):
     :param generated: Summaries (list of strings) produced by the model
     :param reference: Ground-truth summaries (list of strings) for comparison
     """
-    generated_with_newlines = [
-        "\n".join(sent_tokenize(s.strip()))
-        for s in generated
-    ]
-    reference_with_newlines = [
-        "\n".join(sent_tokenize(s.strip()))
-        for s in reference
-    ]
+    generated_with_newlines = ["\n".join(sent_tokenize(s.strip())) for s in generated]
+    reference_with_newlines = ["\n".join(sent_tokenize(s.strip())) for s in reference]
     return rouge_score.compute(
         predictions=generated_with_newlines,
         references=reference_with_newlines,
-        use_stemmer=True
+        use_stemmer=True,
     )
 
 # COMMAND ----------
@@ -440,7 +455,7 @@ tmpdir.cleanup()
 
 # MAGIC %md ## Submit your Results (edX Verified Only)
 # MAGIC
-# MAGIC To get credit for this lab, click the submit button to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
+# MAGIC To get credit for this lab, click the submit button in the top right to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
 
 # COMMAND ----------
 

@@ -45,7 +45,7 @@
 
 # COMMAND ----------
 
-import pandas as pd 
+import pandas as pd
 
 pdf = pd.read_csv(f"{DA.paths.datasets}/news/labelled_newscatcher_dataset.csv", sep=";")
 pdf["id"] = pdf.index
@@ -81,11 +81,13 @@ pdf_subset = pdf.head(1000)
 
 def example_create_fn(doc1: pd.Series) -> InputExample:
     """
-        Helper function that outputs a sentence_transformer guid, label, and text 
+    Helper function that outputs a sentence_transformer guid, label, and text
     """
     return InputExample(texts=[doc1])
 
-faiss_train_examples = pdf_subset.apply(lambda x: example_create_fn(x["title"]), axis=1).tolist()
+faiss_train_examples = pdf_subset.apply(
+    lambda x: example_create_fn(x["title"]), axis=1
+).tolist()
 
 # COMMAND ----------
 
@@ -100,8 +102,9 @@ faiss_train_examples = pdf_subset.apply(lambda x: example_create_fn(x["title"]),
 from sentence_transformers import SentenceTransformer
 
 model = SentenceTransformer(
-    "all-MiniLM-L6-v2",
-    cache_folder=DA.paths.datasets)  # Use a pre-cached model
+    "all-MiniLM-L6-v2", 
+    cache_folder=DA.paths.datasets
+)  # Use a pre-cached model
 faiss_title_embedding = model.encode(pdf_subset.title.values.tolist())
 len(faiss_title_embedding), len(faiss_title_embedding[0])
 
@@ -124,8 +127,8 @@ content_encoded_normalized = faiss_title_embedding.copy()
 faiss.normalize_L2(content_encoded_normalized)
 
 # Index1DMap translates search results to IDs: https://faiss.ai/cpp_api/file/IndexIDMap_8h.html#_CPPv4I0EN5faiss18IndexIDMapTemplateE
-# The IndexFlatIP below builds index 
-index_content = faiss.IndexIDMap(faiss.IndexFlatIP(len(faiss_title_embedding[0]))) 
+# The IndexFlatIP below builds index
+index_content = faiss.IndexIDMap(faiss.IndexFlatIP(len(faiss_title_embedding[0])))
 index_content.add_with_ids(content_encoded_normalized, id_index)
 
 # COMMAND ----------
@@ -138,16 +141,16 @@ index_content.add_with_ids(content_encoded_normalized, id_index)
 # COMMAND ----------
 
 def search_content(query, pdf_to_index, k=3):
-  query_vector = model.encode([query])
-  faiss.normalize_L2(query_vector)
+    query_vector = model.encode([query])
+    faiss.normalize_L2(query_vector)
 
-  # We set k to limit the number of vectors we want to return
-  top_k = index_content.search(query_vector, k)
-  ids = top_k[1][0].tolist()
-  similarities = top_k[0][0].tolist()
-  results = pdf_to_index.loc[ids]
-  results["similarities"] = similarities
-  return results
+    # We set k to limit the number of vectors we want to return
+    top_k = index_content.search(query_vector, k)
+    ids = top_k[1][0].tolist()
+    similarities = top_k[0][0].tolist()
+    results = pdf_to_index.loc[ids]
+    results["similarities"] = similarities
+    return results
 
 # COMMAND ----------
 
@@ -175,10 +178,12 @@ display(search_content("animal", pdf_to_index))
 import chromadb
 from chromadb.config import Settings
 
-chroma_client = chromadb.Client(Settings(
-    chroma_db_impl="duckdb+parquet",
-    persist_directory=DA.paths.user_db # this is an optional argument. If you don't supply this, the data will be ephemeral
-))
+chroma_client = chromadb.Client(
+    Settings(
+        chroma_db_impl="duckdb+parquet",
+        persist_directory=DA.paths.user_db,  # this is an optional argument. If you don't supply this, the data will be ephemeral
+    )
+)
 
 # COMMAND ----------
 
@@ -199,8 +204,10 @@ chroma_client = chromadb.Client(Settings(
 
 collection_name = "my_news"
 
-# If you have created the collection before, you need delete the collection first 
-if len(chroma_client.list_collections()) > 0 and collection_name in [chroma_client.list_collections()[0].name]: 
+# If you have created the collection before, you need delete the collection first
+if len(chroma_client.list_collections()) > 0 and collection_name in [
+    chroma_client.list_collections()[0].name
+]:
     chroma_client.delete_collection(name=collection_name)
 else:
     print(f"Creating collection: '{collection_name}'")
@@ -229,7 +236,7 @@ display(pdf_subset)
 collection.add(
     documents=pdf_subset["title"][:100].tolist(),
     metadatas=[{"topic": topic} for topic in pdf_subset["topic"][:100].tolist()],
-    ids=[f"id{x}" for x in range(100)]
+    ids=[f"id{x}" for x in range(100)],
 )
 
 # COMMAND ----------
@@ -243,10 +250,7 @@ collection.add(
 
 import json
 
-results = collection.query(
-    query_texts=["space"],
-    n_results=10
-)
+results = collection.query(query_texts=["space"], n_results=10)
 
 print(json.dumps(results, indent=4))
 
@@ -259,11 +263,7 @@ print(json.dumps(results, indent=4))
 
 # COMMAND ----------
 
-collection.query(
-    query_texts=["space"],
-    where={"topic": "SCIENCE"},
-    n_results=10
-)
+collection.query(query_texts=["space"], where={"topic": "SCIENCE"}, n_results=10)
 
 # COMMAND ----------
 
@@ -276,9 +276,7 @@ collection.query(
 
 # COMMAND ----------
 
-collection.delete(
-    ids=["id0"]
-)
+collection.delete(ids=["id0"])
 
 # COMMAND ----------
 
@@ -323,15 +321,15 @@ collection.update(
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
 model_id = "gpt2"
-tokenizer = AutoTokenizer.from_pretrained(
-    model_id,
-    cache_dir=DA.paths.datasets)
-lm_model = AutoModelForCausalLM.from_pretrained(
-    model_id,
-    cache_dir=DA.paths.datasets)
+tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=DA.paths.datasets)
+lm_model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=DA.paths.datasets)
 
 pipe = pipeline(
-    "text-generation", model=lm_model, tokenizer=tokenizer, max_new_tokens=512, device_map="auto"
+    "text-generation",
+    model=lm_model,
+    tokenizer=tokenizer,
+    max_new_tokens=512,
+    device_map="auto",
 )
 
 # COMMAND ----------
@@ -349,7 +347,7 @@ pipe = pipeline(
 
 question = "What's the latest news on space development?"
 context = " ".join([f"#{str(i)}" for i in results["documents"][0]])
-prompt_template = f"Relevant context: {context}\n\n The user's question: {question}" 
+prompt_template = f"Relevant context: {context}\n\n The user's question: {question}"
 
 # COMMAND ----------
 
