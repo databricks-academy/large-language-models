@@ -10,9 +10,9 @@
 # MAGIC %md
 # MAGIC # Project Information
 # MAGIC
-# MAGIC * Name: **LLM: Application through Production**
-# MAGIC * Version:  **1.0.1**
-# MAGIC * Built On: **Jun 7, 2023 at 21:58:56 UTC**
+# MAGIC * Name: **Large Language Models**
+# MAGIC * Version:  **1.0.2**
+# MAGIC * Built On: **Jun 8, 2023 at 00:52:11 UTC**
 
 # COMMAND ----------
 
