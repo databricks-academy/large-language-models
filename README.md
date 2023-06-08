@@ -18,7 +18,22 @@ This repo contains the notebooks and slides for the [Large Language Models: Appl
 3. Clone the "HTTPS" URL from GitHub, or copy `https://github.com/databricks-academy/large-language-models.git` and paste into the box `Git repository URL`. The rest of the fields, i.e. `Git provider` and `Repository name`, will be automatically populated. Click `Create Repo` on the bottom right. 
 
     <img width="700" alt="add_repo" src="https://files.training.databricks.com/images/llm/add_repo.png">
+
+ ## How to Import the files from `.dbc` releases on GitHub
+1. You can download the notebooks from a release by navigating to the releases section on the GitHub page:
+    <img width="400" alt="dbc_release1" src="https://files.training.databricks.com/images/llm/dbc_release1.png">
  
+2. From the releases page, download the `.dbc` file. This contains all of the course notebooks, with the structure and meta data. 
+    <img width="400" alt="dbc_release2" src="https://files.training.databricks.com/images/llm/dbc_release2.png">
+
+3. In your Databricks workspace, navigate to the Workspace menu, click on Home and select `Import`:
+    <img width="400" alt="dbc_release3" src="https://files.training.databricks.com/images/llm/dbc_release3.png">
+
+4. Using the import tool, navigate to the location on your computer where the `.dbc` file was dowloaded from Step 1. Once you select the file, click `Import`, and the files will be loaded and extracted to your workspace:
+    <img width="400" alt="dbc_release4" src="https://files.training.databricks.com/images/llm/dbc_release4.png">
+
+
+
 </details>
 
 <details>
