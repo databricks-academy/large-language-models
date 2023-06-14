@@ -104,7 +104,7 @@ dbTestQuestion4_1(ds)
 # MAGIC %md
 # MAGIC ### Question 2: Select pre-trained model
 # MAGIC
-# MAGIC The model that we are going to fine-tune is [pythia-70m-deduped](https://huggingface.co/EleutherAI/pythia-70m). This model is one of a Pythia Suite of models that have been developed to support interpretability research.
+# MAGIC The model that we are going to fine-tune is [pythia-70m-deduped](https://huggingface.co/EleutherAI/pythia-70m-deduped). This model is one of a Pythia Suite of models that have been developed to support interpretability research.
 # MAGIC
 # MAGIC Let's define the pre-trained model checkpoint.
 
