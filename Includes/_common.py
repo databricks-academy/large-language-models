@@ -14,14 +14,14 @@ def __validate_libraries():
 def __install_libraries():
     global pip_command
     
-    specified_version = f"v3.0.76"
+    specified_version = f"v3.0.82"
     key = "dbacademy.library.version"
     version = spark.conf.get(key, specified_version)
 
     if specified_version != version:
         print("** Dependency Version Overridden *******************************************************************")
         print(f"* This course was built for {specified_version} of the DBAcademy Library, but it is being overridden via the Spark")
-        print(f"* configuration variable \"{key}\". The use of version v3.0.76 is not advised as we")
+        print(f"* configuration variable \"{key}\". The use of version v3.0.82 is not advised as we")
         print(f"* cannot guarantee compatibility with this version of the course.")
         print("****************************************************************************************************")
 

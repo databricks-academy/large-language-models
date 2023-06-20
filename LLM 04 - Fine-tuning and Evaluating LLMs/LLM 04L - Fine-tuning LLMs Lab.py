@@ -104,7 +104,7 @@ dbTestQuestion4_1(ds)
 # MAGIC %md
 # MAGIC ### Question 2: Select pre-trained model
 # MAGIC
-# MAGIC The model that we are going to fine-tune is [pythia-70m-deduped](https://huggingface.co/EleutherAI/pythia-70m). This model is one of a Pythia Suite of models that have been developed to support interpretability research.
+# MAGIC The model that we are going to fine-tune is [pythia-70m-deduped](https://huggingface.co/EleutherAI/pythia-70m-deduped). This model is one of a Pythia Suite of models that have been developed to support interpretability research.
 # MAGIC
 # MAGIC Let's define the pre-trained model checkpoint.
 
@@ -312,7 +312,7 @@ trainer.save_state()
 
 # Test your answer. DO NOT MODIFY THIS CELL.
 
-dbTestQuestion4_8()
+dbTestQuestion4_8(trainer)
 
 # COMMAND ----------
 
@@ -366,15 +366,15 @@ def to_response(prediction):
 # COMMAND ----------
 
 import re
-
+# NOTE: this cell can take up to 5mins
 res = []
 for i in range(100):
     instr = ds["train"][i]["instruction"]
     resp = ds["train"][i]["response"]
     inputs = to_prompt(instr)
     pred = fine_tuned_model.generate(
-        input_ids=inputs["input_ids"].to(device),
-        attention_mask=inputs["attention_mask"].to(device),
+        input_ids=inputs["input_ids"],
+        attention_mask=inputs["attention_mask"],
         pad_token_id=tokenizer.pad_token_id,
         max_new_tokens=128,
     )
@@ -431,13 +431,14 @@ def compute_rouge_score(generated, reference):
 # COMMAND ----------
 
 # TODO
-<FILL_IN>
+rouge_scores = <FILL_IN>
+display(<FILL_IN>)
 
 # COMMAND ----------
 
 # Test your answer. DO NOT MODIFY THIS CELL.
 
-dbTestQuestion4_9()
+dbTestQuestion4_9(rouge_scores)
 
 # COMMAND ----------
 

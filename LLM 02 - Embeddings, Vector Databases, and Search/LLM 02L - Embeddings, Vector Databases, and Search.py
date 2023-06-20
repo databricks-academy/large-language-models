@@ -55,9 +55,7 @@ print(dais_pdf.iloc[0]["full_text"])
 
 # COMMAND ----------
 
-texts = []
-for i, row in dais_pdf.iterrows():
-    texts.append(row["full_text"])
+texts = dais_pdf["full_text"].to_list()
 
 # COMMAND ----------
 

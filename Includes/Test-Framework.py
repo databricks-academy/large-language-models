@@ -253,19 +253,19 @@ def dbTestQuestion4_7(trainer):
   
   questionPassed(userhome_for_testing, lesson, question) 
 
-def dbTestQuestion4_8():
+def dbTestQuestion4_8(trainer):
   lesson, question = "lesson4", "question8"
   userhome_for_testing = getUsernameFromEnv(lesson)
 
-  assert True == True # TO FILL IN
+  assert trainer.state.epoch == 10.0, "Test NOT passed: make sure to run your training for 10 epochs exactly."
   
   questionPassed(userhome_for_testing, lesson, question) 
 
-def dbTestQuestion4_9():
+def dbTestQuestion4_9(rouge_scores):
   lesson, question = "lesson4", "question9"
   userhome_for_testing = getUsernameFromEnv(lesson)
 
-  assert True == True # TO FILL IN
+  assert type(rouge_scores) == dict, "Test NOT passed: `rouge_scores should be a dict, check your scoring answer."
   
   questionPassed(userhome_for_testing, lesson, question) 
 
