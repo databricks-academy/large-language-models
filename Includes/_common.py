@@ -14,7 +14,7 @@ def __validate_libraries():
 def __install_libraries():
     global pip_command
     
-    specified_version = f"v3.0.82"
+    specified_version = f"v3.0.84"
     key = "dbacademy.library.version"
     version = spark.conf.get(key, specified_version)
 
