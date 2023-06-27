@@ -586,7 +586,7 @@ from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # Load the pre-trained tokenizer and model.
 tokenizer = AutoTokenizer.from_pretrained("t5-small")
-model = AutoModelForSeq2SeqLM.from_pretrained("t5-small)
+model = AutoModelForSeq2SeqLM.from_pretrained("t5-small")
 
 # COMMAND ----------
 

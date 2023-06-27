@@ -53,8 +53,8 @@ import torch
 from datasets import load_dataset
 
 full_dataset = load_dataset(
-    "cnn_dailymail", version="3.0.0"
-)  # Note: We specify cache_dir to use pre-cached data.
+    "cnn_dailymail", "3.0.0"
+)  
 
 # Use a small sample of the data during this lab, for speed.
 sample_size = 100

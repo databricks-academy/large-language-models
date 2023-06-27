@@ -114,7 +114,7 @@ summarizer = pipeline(
     max_length=max_length,
     truncation=truncation,
     do_sample=do_sample,
-)  # Note: We specify cache_dir to use pre-cached models.
+)  
 
 # COMMAND ----------
 

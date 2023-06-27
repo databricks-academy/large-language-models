@@ -86,7 +86,7 @@ from datasets import load_dataset
 
 wiki_data = load_dataset(
     "wiki_bio", split="test"
-)  # Note: We specify cache_dir to use pre-cached data.
+)  
 ds = wiki_data.map(disaggregator)
 pdf = ds.to_pandas()
 
@@ -138,7 +138,7 @@ from transformers import pipeline
 unmasker = pipeline(
     "fill-mask",
     model="bert-base-uncased",
-)  # Note: We specify cache_dir to use pre-cached models.
+)  
 
 # COMMAND ----------
 

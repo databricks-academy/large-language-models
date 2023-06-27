@@ -167,8 +167,8 @@ jekyll_llm = OpenAI(model="text-babbage-001")
 ## We can also use a model from HuggingFaceHub if we wish to go open-source!
 
 # model_id = "EleutherAI/gpt-neo-2.7B"
-# tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=DA.paths.datasets)
-# model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=DA.paths.datasets)
+# tokenizer = AutoTokenizer.from_pretrained(model_id)
+# model = AutoModelForCausalLM.from_pretrained(model_id)
 # pipe = pipeline(
 #     "text-generation", model=model, tokenizer=tokenizer, max_new_tokens=512, device_map='auto'
 # )
@@ -186,7 +186,6 @@ jekyll_llm = OpenAI(model="text-babbage-001")
 
 from langchain.chains import LLMChain
 from better_profanity import profanity
-
 
 jekyll_chain = LLMChain(
     llm=jekyll_llm,

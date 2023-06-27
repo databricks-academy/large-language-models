@@ -99,11 +99,12 @@ faiss_train_examples = pdf_subset.apply(
 
 # COMMAND ----------
 
+import os
 from sentence_transformers import SentenceTransformer
 
 model = SentenceTransformer(
-    "all-MiniLM-L6-v2"
-)  # Use a pre-cached model
+    "all-MiniLM-L6-v2", cache_folder=os.environ["TRANSFORMERS_CACHE"]
+)  
 faiss_title_embedding = model.encode(pdf_subset.title.values.tolist())
 len(faiss_title_embedding), len(faiss_title_embedding[0])
 
@@ -180,7 +181,7 @@ from chromadb.config import Settings
 chroma_client = chromadb.Client(
     Settings(
         chroma_db_impl="duckdb+parquet",
-        persist_directory=DA.paths.user_db,  # this is an optional argument. If you don't supply this, the data will be ephemeral
+        persist_directory=DA.paths.user_db.replace("dbfs:", "/dbfs"),  # this is an optional argument. If you don't supply this, the data will be ephemeral
     )
 )
 

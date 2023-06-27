@@ -29,17 +29,17 @@ local_hf_cache_tar = "/local_disk0/hf.tar"
 local_hf_cache_dir = "/local_disk0/hf"
 
 if pathlib.Path(dbfs_hf_cache).is_file() and not(pathlib.Path(local_hf_cache_tar).is_file()):
-  print("Loading HuggingFace cache...")
-  shutil.copyfile(dbfs_hf_cache, local_hf_cache_zip)
+  print("Loading HuggingFace cache. This can take up to 6 minutes to transfer a cache of datasets and models to your cluster to address HuggingFace instability issues and the parallelism of many students accessing these files concurrently...")
+  shutil.copyfile(dbfs_hf_cache, local_hf_cache_tar)
   
   print("Extracting HuggingFace cache...")
-  cmd = f"cd /local_disk0/ && tar -xvf {local_hf_cache_zip}"
+  cmd = f"cd /local_disk0/ && tar -xvf {local_hf_cache_tar}"
   
   process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
   process.wait()
 
 else:
-  print("Found HuggingFace cache on local disk...")
+  print("Found HuggingFace cache either found on local disk or will download directly from HuggingFace...")
 
 # COMMAND ----------
 

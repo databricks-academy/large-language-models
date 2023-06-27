@@ -13,18 +13,18 @@ os.environ["TRANSFORMERS_CACHE"] = "/local_disk0/hf"
 
 # COMMAND ----------
 
+from datasets.utils.info_utils import VerificationMode
 from datasets import load_dataset
 
-#load_dataset("Helsinki-NLP/tatoeba_mt","eng-jpn", )
+load_dataset("Helsinki-NLP/tatoeba_mt", "eng-jpn", split="test", verification_mode=VerificationMode.NO_CHECKS)
 load_dataset("poem_sentiment", version="1.0.0")
-#load_dataset("cnn_dailymail", version="3.0.0")
+load_dataset("cnn_dailymail", "3.0.0")
 load_dataset("wiki_bio", split="test")
 load_dataset("AlexaAI/bold", split="train")
 
 ds_list = [
     "xsum",
     "poem_sentiment",
-    "imdb",
     "databricks/databricks-dolly-15k",
     "wiki_bio",
     "AlexaAI/bold",
@@ -63,11 +63,17 @@ model = T5ForConditionalGeneration.from_pretrained("google/flan-t5-large")
 
 # COMMAND ----------
 
+from sentence_transformers import SentenceTransformer
+SentenceTransformer("all-MiniLM-L6-v2", cache_folder="/local_disk0/hf")  
+
+# COMMAND ----------
+
 from transformers import AutoModelForCausalLM, AutoTokenizer, AutoModel
 
 for m in model_list:
   print(m)
   AutoModel.from_pretrained(m)
+  AutoTokenizer.from_pretrained(m)
 
 # COMMAND ----------
 
@@ -92,3 +98,11 @@ for m in model_list:
 # COMMAND ----------
 
 !ls -lah /dbfs/mnt/dbacademy-datasets/large-language-models/v01/hf_cache
+
+# COMMAND ----------
+
+!tar -tvf /dbfs/mnt/dbacademy-datasets/large-language-models/v01/hf_cache/hf.tar | grep Mini
+
+# COMMAND ----------
+
+
