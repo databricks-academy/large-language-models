@@ -130,8 +130,7 @@ hf_llm = HuggingFacePipeline.from_model_id(
     task="text2text-generation",
     model_kwargs={
         "temperature": 0,
-        "max_length": 128,
-        "cache_dir": DA.paths.datasets,
+        "max_length": 128
     },
 )
 

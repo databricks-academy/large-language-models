@@ -16,6 +16,33 @@ DA.paths.datasets = DA.paths.to_vm_path(DA.paths.datasets)
 
 # COMMAND ----------
 
+import pathlib
+import subprocess
+import os
+import shutil
+
+os.environ["HF_HOME"] = "/local_disk0/hf"
+os.environ["TRANSFORMERS_CACHE"] = "/local_disk0/hf"
+
+dbfs_hf_cache = "/dbfs/mnt/dbacademy-datasets/large-language-models/v01/hf_cache/hf.tar"
+local_hf_cache_tar = "/local_disk0/hf.tar"
+local_hf_cache_dir = "/local_disk0/hf"
+
+if pathlib.Path(dbfs_hf_cache).is_file() and not(pathlib.Path(local_hf_cache_tar).is_file()):
+  print("Loading HuggingFace cache...")
+  shutil.copyfile(dbfs_hf_cache, local_hf_cache_zip)
+  
+  print("Extracting HuggingFace cache...")
+  cmd = f"cd /local_disk0/ && tar -xvf {local_hf_cache_zip}"
+  
+  process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE)
+  process.wait()
+
+else:
+  print("Found HuggingFace cache on local disk...")
+
+# COMMAND ----------
+
 DA.conclude_setup()                                 # Finalizes the state and prints the config for the student
 
 print("\nThe models developed or used in this course are for demonstration and learning purposes only.\nModels may occasionally output offensive, inaccurate, biased information, or harmful instructions.")

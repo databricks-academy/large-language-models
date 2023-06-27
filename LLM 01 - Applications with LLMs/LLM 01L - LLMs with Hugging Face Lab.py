@@ -60,7 +60,7 @@ from transformers import pipeline
 # COMMAND ----------
 
 xsum_dataset = load_dataset(
-    "xsum", version="1.2.0", cache_dir=DA.paths.datasets
+    "xsum", version="1.2.0"
 )  # Note: We specify cache_dir to use predownloaded data.
 xsum_sample = xsum_dataset["train"].select(range(10))
 display(xsum_sample.to_pandas())
@@ -112,14 +112,16 @@ display(
 
 # COMMAND ----------
 
+from datasets.utils.info_utils import VerificationMode
+
 jpn_dataset = load_dataset(
     "Helsinki-NLP/tatoeba_mt",
-    version="1.0.0",
-    language_pair="eng-jpn",
-    cache_dir=DA.paths.datasets,
+    "eng-jpn",
+    split="test", 
+    verification_mode=VerificationMode.NO_CHECKS
 )
 jpn_sample = (
-    jpn_dataset["test"]
+    jpn_dataset
     .select(range(10))
     .rename_column("sourceString", "English")
     .rename_column("targetString", "Japanese")
@@ -209,7 +211,6 @@ few_shot_pipeline = pipeline(
     task="text-generation",
     model="EleutherAI/gpt-neo-1.3B",
     max_new_tokens=50,
-    model_kwargs={"cache_dir": DA.paths.datasets},
 )  # Use a predownloaded model
 
 # Get the token ID for "###", which we will use as the EOS token below.  (Recall we did this in the demo notebook.)
@@ -265,12 +266,12 @@ dbTestQuestion1_3(few_shot_pipeline, prompt, results[0]["generated_text"])
 
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
-xsum_dataset = load_dataset("xsum", version="1.2.0", cache_dir=DA.paths.datasets)
+xsum_dataset = load_dataset("xsum", version="1.2.0")
 xsum_sample = xsum_dataset["train"].select(range(10))
 
-tokenizer = T5Tokenizer.from_pretrained("t5-small", cache_dir=DA.paths.datasets)
+tokenizer = T5Tokenizer.from_pretrained("t5-small")
 model = T5ForConditionalGeneration.from_pretrained(
-    "t5-small", cache_dir=DA.paths.datasets
+    "t5-small"
 )
 
 # Prepare articles for T5, which requires a "summarize: " prefix.

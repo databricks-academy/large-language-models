@@ -53,7 +53,7 @@ import torch
 from datasets import load_dataset
 
 full_dataset = load_dataset(
-    "cnn_dailymail", version="3.0.0", cache_dir=DA.paths.datasets
+    "cnn_dailymail", version="3.0.0"
 )  # Note: We specify cache_dir to use pre-cached data.
 
 # Use a small sample of the data during this lab, for speed.
@@ -119,10 +119,10 @@ def summarize_with_t5(
         device = "cpu"
 
     model = T5ForConditionalGeneration.from_pretrained(
-        model_checkpoint, cache_dir=DA.paths.datasets
+        model_checkpoint
     ).to(device)
     tokenizer = AutoTokenizer.from_pretrained(
-        model_checkpoint, model_max_length=1024, cache_dir=DA.paths.datasets
+        model_checkpoint, model_max_length=1024
     )
 
     def perform_inference(batch: list) -> list:
@@ -428,13 +428,12 @@ def summarize_with_gpt2(
         device = "cpu"
 
     tokenizer = GPT2Tokenizer.from_pretrained(
-        model_checkpoint, padding_side="left", cache_dir=DA.paths.datasets
+        model_checkpoint, padding_side="left"
     )
     tokenizer.add_special_tokens({"pad_token": tokenizer.eos_token})
     model = GPT2LMHeadModel.from_pretrained(
         model_checkpoint,
         pad_token_id=tokenizer.eos_token_id,
-        cache_dir=DA.paths.datasets,
     ).to(device)
 
     def perform_inference(batch: list) -> list:

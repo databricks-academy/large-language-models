@@ -72,7 +72,7 @@ from transformers import pipeline
 # COMMAND ----------
 
 xsum_dataset = load_dataset(
-    "xsum", version="1.2.0", cache_dir=DA.paths.datasets
+    "xsum", version="1.2.0"
 )  # Note: We specify cache_dir to use pre-cached data.
 xsum_sample = xsum_dataset["train"].select(range(10))
 display(xsum_sample.to_pandas())
@@ -114,7 +114,6 @@ summarizer = pipeline(
     max_length=max_length,
     truncation=truncation,
     do_sample=do_sample,
-    model_kwargs={"cache_dir": DA.paths.datasets},
 )  # Note: We specify cache_dir to use pre-cached models.
 
 # COMMAND ----------

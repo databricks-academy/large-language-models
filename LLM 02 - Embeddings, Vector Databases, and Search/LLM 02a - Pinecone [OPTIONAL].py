@@ -124,7 +124,7 @@ from sentence_transformers import SentenceTransformer
 
 # We will use embeddings from this model to apply to our data
 model = SentenceTransformer(
-    "all-MiniLM-L6-v2", cache_folder=DA.paths.datasets
+    "all-MiniLM-L6-v2"
 )  # Use a pre-cached model
 
 # COMMAND ----------

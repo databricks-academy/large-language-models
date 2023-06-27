@@ -80,8 +80,8 @@ from transformers import pipeline
 # COMMAND ----------
 
 xsum_dataset = load_dataset(
-    "xsum", version="1.2.0", cache_dir=DA.paths.datasets
-)  # Note: We specify cache_dir to use predownloaded data.
+    "xsum", version="1.2.0"
+)
 xsum_dataset  # The printed representation of this object shows the `num_rows` of each dataset split.
 
 # COMMAND ----------
@@ -112,8 +112,7 @@ summarizer = pipeline(
     min_length=20,
     max_length=40,
     truncation=True,
-    model_kwargs={"cache_dir": DA.paths.datasets},
-)  # Note: We specify cache_dir to use predownloaded models.
+) 
 
 # COMMAND ----------
 
@@ -154,7 +153,7 @@ display(
 # COMMAND ----------
 
 poem_dataset = load_dataset(
-    "poem_sentiment", version="1.0.0", cache_dir=DA.paths.datasets
+    "poem_sentiment", version="1.0.0"
 )
 poem_sample = poem_dataset["train"].select(range(10))
 display(poem_sample.to_pandas())
@@ -168,7 +167,6 @@ display(poem_sample.to_pandas())
 sentiment_classifier = pipeline(
     task="text-classification",
     model="nickwong64/bert-base-uncased-poems-sentiment",
-    model_kwargs={"cache_dir": DA.paths.datasets},
 )
 
 # COMMAND ----------
@@ -216,7 +214,6 @@ display(joined_data[["predicted_label", "true_label", "score", "verse_text"]])
 en_to_es_translation_pipeline = pipeline(
     task="translation",
     model="Helsinki-NLP/opus-mt-en-es",
-    model_kwargs={"cache_dir": DA.paths.datasets},
 )
 
 # COMMAND ----------
@@ -235,7 +232,6 @@ t5_small_pipeline = pipeline(
     task="text2text-generation",
     model="t5-small",
     max_length=50,
-    model_kwargs={"cache_dir": DA.paths.datasets},
 )
 
 # COMMAND ----------
@@ -267,7 +263,6 @@ t5_small_pipeline(
 zero_shot_pipeline = pipeline(
     task="zero-shot-classification",
     model="cross-encoder/nli-deberta-v3-small",
-    model_kwargs={"cache_dir": DA.paths.datasets},
 )
 
 
@@ -368,7 +363,6 @@ few_shot_pipeline = pipeline(
     task="text-generation",
     model="EleutherAI/gpt-neo-1.3B",
     max_new_tokens=10,
-    model_kwargs={"cache_dir": DA.paths.datasets},
 )
 
 # COMMAND ----------
@@ -591,8 +585,8 @@ summarizer(xsum_sample["document"][0], do_sample=True, top_k=10, top_p=0.8)
 from transformers import AutoTokenizer, AutoModelForSeq2SeqLM
 
 # Load the pre-trained tokenizer and model.
-tokenizer = AutoTokenizer.from_pretrained("t5-small", cache_dir=DA.paths.datasets)
-model = AutoModelForSeq2SeqLM.from_pretrained("t5-small", cache_dir=DA.paths.datasets)
+tokenizer = AutoTokenizer.from_pretrained("t5-small")
+model = AutoModelForSeq2SeqLM.from_pretrained("t5-small)
 
 # COMMAND ----------
 
@@ -643,9 +637,9 @@ display(pd.DataFrame(decoded_summaries, columns=["decoded_summaries"]))
 
 from transformers import T5Tokenizer, T5ForConditionalGeneration
 
-tokenizer = T5Tokenizer.from_pretrained("t5-small", cache_dir=DA.paths.datasets)
+tokenizer = T5Tokenizer.from_pretrained("t5-small")
 model = T5ForConditionalGeneration.from_pretrained(
-    "t5-small", cache_dir=DA.paths.datasets
+    "t5-small"
 )
 
 # COMMAND ----------

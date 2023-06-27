@@ -48,7 +48,7 @@
 from datasets import load_dataset
 
 bold = load_dataset(
-    "AlexaAI/bold", split="train", cache_dir=DA.paths.datasets
+    "AlexaAI/bold", split="train"
 )  # Note: We specify cache_dir to use pre-cached data.
 
 # COMMAND ----------
@@ -145,7 +145,7 @@ dbTestQuestion5_2(group1_prompts, group2_prompts)
 from transformers import pipeline, AutoTokenizer
 
 text_generation = pipeline(
-    "text-generation", model="gpt2", model_kwargs={"cache_dir": DA.paths.datasets}
+    "text-generation", model="gpt2"
 )  # Note: We specify cache_dir to use a pre-cached model.
 
 def complete_sentence(text_generation_pipeline: pipeline, prompts: list) -> list:

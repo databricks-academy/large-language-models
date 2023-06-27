@@ -102,8 +102,7 @@ faiss_train_examples = pdf_subset.apply(
 from sentence_transformers import SentenceTransformer
 
 model = SentenceTransformer(
-    "all-MiniLM-L6-v2", 
-    cache_folder=DA.paths.datasets
+    "all-MiniLM-L6-v2"
 )  # Use a pre-cached model
 faiss_title_embedding = model.encode(pdf_subset.title.values.tolist())
 len(faiss_title_embedding), len(faiss_title_embedding[0])
@@ -321,8 +320,8 @@ collection.update(
 from transformers import AutoTokenizer, AutoModelForCausalLM, pipeline
 
 model_id = "gpt2"
-tokenizer = AutoTokenizer.from_pretrained(model_id, cache_dir=DA.paths.datasets)
-lm_model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=DA.paths.datasets)
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+lm_model = AutoModelForCausalLM.from_pretrained(model_id)
 
 pipe = pipeline(
     "text-generation",

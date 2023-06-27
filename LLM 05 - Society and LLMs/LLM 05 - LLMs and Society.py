@@ -85,7 +85,7 @@ disaggregator = Disaggregator("pronoun", column="target_text")
 from datasets import load_dataset
 
 wiki_data = load_dataset(
-    "wiki_bio", split="test", cache_dir=DA.paths.datasets
+    "wiki_bio", split="test"
 )  # Note: We specify cache_dir to use pre-cached data.
 ds = wiki_data.map(disaggregator)
 pdf = ds.to_pandas()
@@ -138,7 +138,6 @@ from transformers import pipeline
 unmasker = pipeline(
     "fill-mask",
     model="bert-base-uncased",
-    model_kwargs={"cache_dir": DA.paths.datasets},
 )  # Note: We specify cache_dir to use pre-cached models.
 
 # COMMAND ----------
@@ -217,9 +216,9 @@ from transformers import AutoTokenizer, AutoModelForCausalLM
 import shap
 
 tokenizer = AutoTokenizer.from_pretrained(
-    "gpt2", use_fast=True, cache_dir=DA.paths.datasets
+    "gpt2", use_fast=True
 )
-model = AutoModelForCausalLM.from_pretrained("gpt2", cache_dir=DA.paths.datasets)
+model = AutoModelForCausalLM.from_pretrained("gpt2")
 
 # Set model decoder to true
 # GPT is a decoder-only model
