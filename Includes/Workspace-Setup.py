@@ -132,21 +132,6 @@ ClustersHelper.create_dlt_policy(client=DA.client,
 
 # MAGIC %md
 # MAGIC
-# MAGIC ## Create Class-Shared Databricks SQL Warehouse/Endpoint
-# MAGIC Creates a single wharehouse to be used by all students.
-# MAGIC
-# MAGIC The configuration is derived from the number of students specified above.
-
-# COMMAND ----------
-
-from dbacademy.dbhelper.warehouses_helper_class import WarehousesHelper
-
-DA.workspace.warehouses.create_shared_sql_warehouse(name=WarehousesHelper.WAREHOUSES_DEFAULT_NAME)
-
-# COMMAND ----------
-
-# MAGIC %md
-# MAGIC
 # MAGIC ## Configure User Entitlements
 # MAGIC
 # MAGIC This task simply adds the "**databricks-sql-access**" entitlement to the "**users**" group ensuring that they can access the Databricks SQL view.

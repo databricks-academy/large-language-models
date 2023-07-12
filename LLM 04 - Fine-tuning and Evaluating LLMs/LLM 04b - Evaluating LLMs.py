@@ -43,7 +43,7 @@
 
 # MAGIC %md ## Dataset
 # MAGIC
-# MAGIC We will use a subset of the `cnn_dailymail` dataset from See et al., 2017, downloadable from the Hugging Face `datasets` hub: https://huggingface.co/datasets/cnn_dailymail
+# MAGIC We will use a subset of the `cnn_dailymail` dataset from See et al., 2017, downloadable from the [Hugging Face `datasets` hub](https://huggingface.co/datasets/cnn_dailymail).
 # MAGIC
 # MAGIC This dataset provides news article paired with summaries (in the "highlights" column).  Let's load the data and take a look at some examples.
 
@@ -202,7 +202,7 @@ print(f"Achieved accuracy {accuracy}!")
 # MAGIC
 # MAGIC Now that we can generate summaries---and we know 0/1 accuracy is useless here---let's look at how we can compute a meaningful metric designed to evaluate summarization: ROUGE.
 # MAGIC
-# MAGIC Recall-Oriented Understudy for Gisting Evaluation (ROUGE) is a set of evaluation metrics designed for comparing summaries from Lin et al., 2004.  See https://en.wikipedia.org/wiki/ROUGE_(metric) for more info.  Here, we use the Hugging Face Evaluator wrapper to call into the `rouge_score` package.  This package provides 4 scores:
+# MAGIC Recall-Oriented Understudy for Gisting Evaluation (ROUGE) is a set of evaluation metrics designed for comparing summaries from Lin et al., 2004.  See [Wikipedia](https://en.wikipedia.org/wiki/ROUGE_&#40;metric&#41;) for more info.  Here, we use the Hugging Face Evaluator wrapper to call into the `rouge_score` package.  This package provides 4 scores:
 # MAGIC
 # MAGIC * `rouge1`: ROUGE computed over unigrams (single words or tokens)
 # MAGIC * `rouge2`: ROUGE computed over bigrams (pairs of consecutive words or tokens)

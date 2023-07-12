@@ -79,7 +79,7 @@ chroma_client = chromadb.Client(
 
 # MAGIC %md
 # MAGIC
-# MAGIC Fill out `collection_name` below.
+# MAGIC Assign the value of `my_talks` to the `collection_name` variable.
 
 # COMMAND ----------
 
@@ -104,7 +104,7 @@ dbTestQuestion2_1(collection_name)
 # MAGIC %md
 # MAGIC ## Question 2
 # MAGIC
-# MAGIC Add data to collection
+# MAGIC [Add](https://docs.trychroma.com/reference/Collection#add) data to the collection. 
 
 # COMMAND ----------
 
@@ -125,7 +125,7 @@ dbTestQuestion2_2(talks_collection)
 # MAGIC %md
 # MAGIC ## Question 3
 # MAGIC
-# MAGIC Query for relevant documents
+# MAGIC [Query](https://docs.trychroma.com/reference/Collection#query) for relevant documents. If you are looking for talks related to language models, your query texts could be `language models`. 
 
 # COMMAND ----------
 
@@ -150,7 +150,7 @@ dbTestQuestion2_3(results)
 # MAGIC %md
 # MAGIC ## Question 4
 # MAGIC
-# MAGIC Load language model
+# MAGIC Load a language model and create a [pipeline](https://huggingface.co/docs/transformers/main/en/main_classes/pipelines).
 
 # COMMAND ----------
 
@@ -183,7 +183,8 @@ dbTestQuestion2_4(pipe)
 
 # TODO
 # Come up with a question that you need the LLM assistant to help you with
-# A sample question is "Help me find sessions related to XYZ"
+# A sample question is "Help me find sessions related to XYZ" 
+# Note: Your "XYZ" should be related to the query you passed in Question 3. 
 question = "<FILL_IN>"
 
 # Provide all returned similar documents from the cell above below

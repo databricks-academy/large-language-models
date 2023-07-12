@@ -11,8 +11,8 @@
 # MAGIC # Project Information
 # MAGIC
 # MAGIC * Name: **Large Language Models**
-# MAGIC * Version:  **1.0.2**
-# MAGIC * Built On: **Jun 8, 2023 at 00:52:11 UTC**
+# MAGIC * Version:  **1.0.3**
+# MAGIC * Built On: **Jul 12, 2023 at 18:13:09 UTC**
 
 # COMMAND ----------
 

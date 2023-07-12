@@ -73,7 +73,7 @@ def dbTestQuestion1_2(translation_pipeline, translation_results, translation_inp
   lesson, question = "lesson1", "question2"
   userhome_for_testing = getUsernameFromEnv(lesson)
 
-  assert str(translation_pipeline.task) == "translation", "Test NOT passed: Pipeline should be built for task `translation`"
+  assert "translation" in str(translation_pipeline.task), "Test NOT passed: Pipeline should be built for task `translation`"
   assert isinstance(translation_results, list), "Test NOT passed: Result should be a list."
   assert len(translation_results) == len(translation_inputs), "Test NOT passed: Result should be a list of length equal to the input dataset size."
   assert min([len(s) for s in translation_results]) > 0, "Test NOT passed: Translations should be non-empty."
@@ -100,7 +100,7 @@ def dbTestQuestion2_1(collection_name):
   lesson, question = "lesson2", "question1"
   userhome_for_testing = getUsernameFromEnv(lesson)
 
-  assert  collection_name is not None, "Test NOT passed: The collection name should not be empty." 
+  assert  collection_name=="my_talks", "Test NOT passed: The collection_name should be my_talks." 
 
   questionPassed(userhome_for_testing, lesson, question)
 

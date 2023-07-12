@@ -204,14 +204,12 @@ chroma_client = chromadb.Client(
 
 collection_name = "my_news"
 
-# If you have created the collection before, you need delete the collection first
-if len(chroma_client.list_collections()) > 0 and collection_name in [
-    chroma_client.list_collections()[0].name
-]:
+# If you have created the collection before, you need to delete the collection first
+if len(chroma_client.list_collections()) > 0 and collection_name in [chroma_client.list_collections()[0].name]:
     chroma_client.delete_collection(name=collection_name)
-else:
-    print(f"Creating collection: '{collection_name}'")
-    collection = chroma_client.create_collection(name=collection_name)
+
+print(f"Creating collection: '{collection_name}'")
+collection = chroma_client.create_collection(name=collection_name)
 
 # COMMAND ----------
 

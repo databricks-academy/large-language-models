@@ -108,7 +108,10 @@ display(
 # MAGIC
 # MAGIC We will use the [Helsinki-NLP/tatoeba_mt](https://huggingface.co/datasets/Helsinki-NLP/tatoeba_mt) dataset.  It includes sentence pairs from many languages, but we will focus on translating Japanese to English.
 # MAGIC
-# MAGIC If you feel stuck, please refer to the hints at the end of this section.
+# MAGIC Hints in case you feel stuck on this task:
+# MAGIC * Some models can handle *a lot* of languages.  Check out [NLLB](https://huggingface.co/docs/transformers/model_doc/nllb), the No Language Left Behind model ([research paper](https://arxiv.org/abs/2207.04672)).
+# MAGIC * The "translation" task for `pipeline` takes optional parameters `src_lang` (source language) and `tgt_lang` (target language), which are important when the model can handle multiple languages.  To figure out what codes to use to specify languages (and scripts for those languages), it can be helpful to find existing examples of using your model; for NLLB, check out [this Python script with codes](https://huggingface.co/spaces/Geonmo/nllb-translation-demo/blob/main/flores200_codes.py) or similar demo resources.
+# MAGIC
 
 # COMMAND ----------
 
@@ -159,13 +162,6 @@ display(translation_results_df)
 
 # COMMAND ----------
 
-# MAGIC %md If you feel stuck on the above Japanese -> English translation task, here are some hints:
-# MAGIC * Some models can handle *a lot* of languages.  Check out [NLLB](https://huggingface.co/docs/transformers/model_doc/nllb), the No Language Left Behind model ([research paper](https://arxiv.org/abs/2207.04672)).
-# MAGIC * The "translation" task for `pipeline` takes optional parameters `src_lang` (source language) and `tgt_lang` (target language), which are important when the model can handle multiple languages.  To figure out what codes to use to specify languages (and scripts for those languages), it can be helpful to find existing examples of using your model; for NLLB, check out [this Python script with codes](https://huggingface.co/spaces/Geonmo/nllb-translation-demo/blob/main/flores200_codes.py) or similar demo resources.
-# MAGIC
-
-# COMMAND ----------
-
 # MAGIC %md ### Question 3: Few-shot learning
 # MAGIC
 # MAGIC In this section, you will build a prompt which gets an LLM to answer a few-shot learning problem.  Your prompt will have 3 sections:
@@ -176,7 +172,7 @@ display(translation_results_df)
 # MAGIC
 # MAGIC Your goal is to make the LLM answer the new query, with as good a response as possible.
 # MAGIC
-# MAGIC More specifically, your prompt should following this template:
+# MAGIC More specifically, your prompt should follow this template:
 # MAGIC ```
 # MAGIC <High-level instruction about the task: Given input_label, generate output_label.>:
 # MAGIC

@@ -21,7 +21,7 @@ def __install_libraries():
     if specified_version != version:
         print("** Dependency Version Overridden *******************************************************************")
         print(f"* This course was built for {specified_version} of the DBAcademy Library, but it is being overridden via the Spark")
-        print(f"* configuration variable \"{key}\". The use of version v3.0.82 is not advised as we")
+        print(f"* configuration variable \"{key}\". The use of version v3.0.84 is not advised as we")
         print(f"* cannot guarantee compatibility with this version of the course.")
         print("****************************************************************************************************")
 

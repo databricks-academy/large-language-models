@@ -230,9 +230,9 @@ hyde_prompt_template = PromptTemplate(
 # -----------------------------------
 # 2 We connect an LLM for Hyde, (we could use a slightly more advanced model 'text-davinci-003 since we have some more logic in this prompt).
 
-# hyde_llm=jekyll_llm
+hyde_llm = jekyll_llm
 # Uncomment the line below if you were to use OpenAI instead
-hyde_llm = OpenAI(model="text-davinci-003")
+# hyde_llm = OpenAI(model="text-davinci-003")
 
 # -----------------------------------
 # -----------------------------------
@@ -273,7 +273,7 @@ jekyllhyde_chain.run({"sentiment": random_sentiment, "social_post": social_post}
 # MAGIC %md 
 # MAGIC ## `DaScie` - Our first vector database data science AI agent!
 # MAGIC
-# MAGIC In this section we're going to build an Agent based on the [ReAct paradigm](https://react-lm.github.io/) (or though-action-observation loop) that will take instructions in plain text and perform data science analysis on data that we've stored in a vector database. The agent type we'll use is using zero-shot learning, which takes in the prompt and leverages the underlying LLMs' zero-shot abilities. 
+# MAGIC In this section we're going to build an Agent based on the [ReAct paradigm](https://react-lm.github.io/) (or thought-action-observation loop) that will take instructions in plain text and perform data science analysis on data that we've stored in a vector database. The agent type we'll use is using zero-shot learning, which takes in the prompt and leverages the underlying LLMs' zero-shot abilities. 
 
 # COMMAND ----------
 

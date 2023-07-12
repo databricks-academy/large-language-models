@@ -9,6 +9,7 @@ DA.init()                                           # Performs basic intializati
 
 DA.paths.working_dir = DA.paths.to_vm_path(DA.paths.working_dir)
 DA.paths.datasets = DA.paths.to_vm_path(DA.paths.datasets)
+DA.paths.user_db = DA.paths.to_vm_path(DA.paths.user_db)
 
 # COMMAND ----------
 

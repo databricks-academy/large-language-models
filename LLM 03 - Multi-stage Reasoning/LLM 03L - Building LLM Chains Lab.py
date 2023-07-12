@@ -246,6 +246,7 @@ dbTestQuestion3_2(qa, query_results_hamlet)
 # MAGIC - [`map_reduce`](https://docs.langchain.com/docs/components/chains/index_related_chains#map-reduce) - This method involves running an initial prompt on each chunk of data (for summarization tasks, this could be a summary of that chunk; for question-answering tasks, it could be an answer based solely on that chunk).
 # MAGIC - [`refine`](https://docs.langchain.com/docs/components/chains/index_related_chains#refine) - This method involves running an initial prompt on the first chunk of data, generating some output. For the remaining documents, that output is passed in, along with the next document, asking the LLM to refine the output based on the new document.
 # MAGIC - [`map_rerank`](https://docs.langchain.com/docs/components/chains/index_related_chains#map-rerank) - This method involves running an initial prompt on each chunk of data, that not only tries to complete a task but also gives a score for how certain it is in its answer. The responses are then ranked according to this score, and the highest score is returned.
+# MAGIC   * NOTE: For this exercise, `map_rerank` will [error](https://github.com/hwchase17/langchain/issues/3970).
 
 # COMMAND ----------
 

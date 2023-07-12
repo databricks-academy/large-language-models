@@ -27,7 +27,7 @@
 
 # COMMAND ----------
 
-# MAGIC %pip install pinecone-client==2.2.1
+# MAGIC %pip install pinecone-client==2.2.2
 
 # COMMAND ----------
 
@@ -236,8 +236,7 @@ from typing import Iterator
 
 @pandas_udf("array<float>")
 def create_embeddings_with_transformers(
-    sentences: Iterator[pd.Series],
-) -> Iterator[pd.Series]:
+    sentences: Iterator[pd.Series],) -> Iterator[pd.Series]:
     model = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
     for batch in sentences:
         yield pd.Series(model.encode(batch).tolist())
@@ -249,11 +248,11 @@ import pyspark.sql.functions as F
 transformer_type = "sentence-transformers/all-MiniLM-L6-v2"
 embedding_spark_df = (
     df.limit(1000)
-    .withColumn("vector", create_embeddings_with_transformers("title"))
+    .withColumn("values", create_embeddings_with_transformers("title")) 
     .withColumn("namespace", F.lit(transformer_type))
     .withColumn("metadata", F.to_json(F.struct(F.col("topic").alias("TOPIC"))))
     # We select these columns because they are expected by the Spark-Pinecone connector
-    .select("id", "vector", "namespace", "metadata")
+    .select("id", "values", "namespace", "metadata")
 )
 display(embedding_spark_df)
 
