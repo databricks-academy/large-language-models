@@ -50,7 +50,7 @@ This repo contains the notebooks and slides for the [Large Language Models: Appl
     <img width="500" alt="single_node" src="https://files.training.databricks.com/images/llm/single_node.png">
 
 
-2. This courseware has been tested on [Databricks Runtime 13.1 for Machine Learning]([url](https://docs.databricks.com/release-notes/runtime/13.1ml.html)). If you do not have access to a 13.1 ML Runtime cluster, you will need to install many additional libraries (as the ML Runtime pre-installs many commonly used machine learning packages), and this courseware is not guaranteed to run. 
+2. This courseware has been tested on [Databricks Runtime 13.3 LTS for Machine Learning]([url](https://docs.databricks.com/en/release-notes/runtime/13.3lts-ml.html)). If you do not have access to a 13.3 LTS ML Runtime cluster, you will need to install many additional libraries (as the ML Runtime pre-installs many commonly used machine learning packages), and this courseware is not guaranteed to run. 
     
     <img width="400" alt="cluster" src="https://files.training.databricks.com/images/llm/cluster.png">
 
@@ -59,7 +59,7 @@ This repo contains the notebooks and slides for the [Large Language Models: Appl
 
     <img width="400" alt="cpu_settings" src="https://files.training.databricks.com/images/llm/cpu_settings.png">
     
-    For these notebooks: `LLM 04a - Fine-tuning LLMs` and `LLM04L - Fine-tuning LLMs Lab`, you will need the Databricks Runtime 13.1 for Machine Learning **with GPU**. 
+    For these notebooks: `LLM 04a - Fine-tuning LLMs` and `LLM04L - Fine-tuning LLMs Lab`, you will need the Databricks Runtime 13.3 LTS for Machine Learning **with GPU**. 
 
     <img width="400" alt="gpu" src="https://files.training.databricks.com/images/llm/gpu.png">
 
