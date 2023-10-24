@@ -163,8 +163,8 @@ display(pd.DataFrame(results, columns=["summary_text"]))
 
 import mlflow
 
-# Tell MLflow Tracking to user this explicit experiment path,
-# which is in your home directory under the Workspace browser (left-hand sidebar).
+# Tell MLflow Tracking to use this explicit experiment path,
+# which is located on the left hand sidebar under Machine Learning -> Experiments 
 mlflow.set_experiment(f"/Users/{DA.username}/LLM 06 - MLflow experiment")
 
 with mlflow.start_run():

@@ -212,8 +212,7 @@ print(f"Jekyll said:{cleaned_jekyll_said}")
 
 # COMMAND ----------
 
-# -----------------------------------
-# -----------------------------------
+#####################################
 # 1 We will build the prompt template
 # Our template for Hyde will take Jekyll's comment and do some sentiment analysis.
 hyde_template = """
@@ -226,22 +225,21 @@ hyde_prompt_template = PromptTemplate(
     input_variables=["jekyll_said"],
     template=hyde_template,
 )
-# -----------------------------------
-# -----------------------------------
+
+#####################################
 # 2 We connect an LLM for Hyde, (we could use a slightly more advanced model 'text-davinci-003 since we have some more logic in this prompt).
 
 hyde_llm = jekyll_llm
 # Uncomment the line below if you were to use OpenAI instead
 # hyde_llm = OpenAI(model="text-davinci-003")
 
-# -----------------------------------
-# -----------------------------------
+#####################################
 # 3 We build the chain for Hyde
 hyde_chain = LLMChain(
     llm=hyde_llm, prompt=hyde_prompt_template, verbose=False
 )  # Now that we've chained the LLM and prompt, the output of the formatted prompt will pass directly to the LLM.
-# -----------------------------------
-# -----------------------------------
+
+#####################################
 # 4 Let's run the chain with what Jekyll last said
 # To run our chain we use the .run() command and input our variables as a dict
 hyde_says = hyde_chain.run({"jekyll_said": jekyll_said})

@@ -32,15 +32,15 @@
 
 # COMMAND ----------
 
+# MAGIC %pip install chromadb==0.4.10 tiktoken==0.3.3 sqlalchemy==2.0.15 langchain==0.0.249
+
+# COMMAND ----------
+
+dbutils.library.restartPython()
+
+# COMMAND ----------
+
 # MAGIC %run ../Includes/Classroom-Setup
-
-# COMMAND ----------
-
-# MAGIC %md Import libraries.
-
-# COMMAND ----------
-
-# MAGIC %pip install chromadb==0.3.21 tiktoken==0.3.3 sqlalchemy==2.0.15
 
 # COMMAND ----------
 
@@ -92,6 +92,10 @@ display(document)
 from langchain.text_splitter import CharacterTextSplitter
 from langchain.embeddings import HuggingFaceEmbeddings
 from langchain.vectorstores import Chroma
+import tempfile
+
+tmp_laptop_dir = tempfile.TemporaryDirectory()
+tmp_shakespeare_dir = tempfile.TemporaryDirectory()
 
 # First we split the data into manageable chunks to store as vectors. There isn't an exact way to do this, more chunks means more detailed context, but will increase the size of our vectorstore.
 text_splitter = CharacterTextSplitter(chunk_size=250, chunk_overlap=10)
@@ -103,7 +107,7 @@ embeddings = HuggingFaceEmbeddings(
 )  # Use a pre-cached model
 # Finally we make our Index using chromadb and the embeddings LLM
 chromadb_index = Chroma.from_documents(
-    texts, embeddings, persist_directory=DA.paths.working_dir
+    texts, embeddings, persist_directory=tmp_laptop_dir.name
 )
 
 # COMMAND ----------
@@ -197,13 +201,13 @@ texts = <FILL_IN>
 
 model_name = <FILL_IN> #hint, try "sentence-transformers/all-MiniLM-L6-v2" as your model
 embeddings = <FILL_IN>
-docsearch = <FILL_IN>
+chromadb_index = <FILL_IN>
 
 # COMMAND ----------
 
 # Test your answer. DO NOT MODIFY THIS CELL.
 
-dbTestQuestion3_1(embeddings, docsearch)
+dbTestQuestion3_1(embeddings, chromadb_index)
 
 # COMMAND ----------
 
@@ -251,7 +255,7 @@ dbTestQuestion3_2(qa, query_results_hamlet)
 # COMMAND ----------
 
 # TODO
-qa = RetrievalQA.from_chain_type(llm=hf_llm, chain_type=<FILL_IN>, retriever=docsearch.as_retriever())
+qa = RetrievalQA.from_chain_type(llm=hf_llm, chain_type=<FILL_IN>, retriever=chromadb_index.as_retriever())
 query = "Who is the main character in the Merchant of Venice?"
 query_results_venice = <FILL_IN>
 
@@ -274,7 +278,7 @@ dbTestQuestion3_3(qa, query_results_venice)
 # TODO
 # That's much better! Let's try another type
 
-qa = RetrievalQA.from_chain_type(llm=hf_llm, chain_type=<FILL_IN>, retriever=docsearch.as_retriever())
+qa = RetrievalQA.from_chain_type(llm=hf_llm, chain_type=<FILL_IN>, retriever=chromadb_index.as_retriever())
 query = "What happens to romeo and juliet?"
 query_results_romeo = <FILL_IN>
 
@@ -291,6 +295,11 @@ dbTestQuestion3_4(qa, query_results_romeo)
 # MAGIC %md ## Submit your Results (edX Verified Only)
 # MAGIC
 # MAGIC To get credit for this lab, click the submit button in the top right to report the results. If you run into any issues, click `Run` -> `Clear state and run all`, and make sure all tests have passed before re-submitting. If you accidentally deleted any tests, take a look at the notebook's version history to recover them or reload the notebooks.
+
+# COMMAND ----------
+
+tmp_laptop_dir.cleanup()
+tmp_shakespeare_dir.cleanup()
 
 # COMMAND ----------
 

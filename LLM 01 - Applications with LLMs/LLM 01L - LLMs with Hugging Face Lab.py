@@ -117,8 +117,7 @@ display(
 
 jpn_dataset = load_dataset(
     "Helsinki-NLP/tatoeba_mt",
-    version="1.0.0",
-    language_pair="eng-jpn",
+    "eng-jpn_Hani",
     cache_dir=DA.paths.datasets,
 )
 jpn_sample = (

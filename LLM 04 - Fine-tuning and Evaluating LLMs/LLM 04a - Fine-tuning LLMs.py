@@ -302,6 +302,8 @@ display(pdf)
 # MAGIC As mentioned above, one such framework that can be leveraged to accelerate the model training process is Microsoft's [DeepSpeed](https://github.com/microsoft/DeepSpeed) [[paper]](https://arxiv.org/pdf/2207.00032.pdf). This framework provides advances in compression, distributed training, mixed precision, gradient accumulation, and checkpointing.
 # MAGIC
 # MAGIC It is worth noting that DeepSpeed is intended for large models that do not fit into device memory. The `t5-base` model we are using is not a large model, and therefore DeepSpeed is not expected to provide a benefit.
+# MAGIC
+# MAGIC ### !! Please do not attempt this in Vocareum as it will take more than 5 hours to run and exhaust your compute budget!!
 
 # COMMAND ----------
 
@@ -352,7 +354,16 @@ zero_config = {
             "torch_adam": True,
         },
     },
+    "scheduler": {
+        "type": "WarmupLR",
+        "params": {
+            "warmup_min_lr": "auto",
+            "warmup_max_lr": "auto",
+            "warmup_num_steps": "auto"
+        }
+    },
     "train_batch_size": "auto",
+    "train_micro_batch_size_per_gpu": "auto"
 }
 
 # COMMAND ----------

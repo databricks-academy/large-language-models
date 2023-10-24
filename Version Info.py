@@ -11,8 +11,8 @@
 # MAGIC # Project Information
 # MAGIC
 # MAGIC * Name: **Large Language Models**
-# MAGIC * Version:  **1.0.3**
-# MAGIC * Built On: **Jul 12, 2023 at 18:13:09 UTC**
+# MAGIC * Version:  **2.0.0**
+# MAGIC * Built On: **Oct 19, 2023 at 10:05:02 UTC**
 
 # COMMAND ----------
 
@@ -43,7 +43,7 @@
 # MAGIC
 # MAGIC To ensure that all labs execute as expected, Databricks Academy requires that the content provided be executed against a cluster configured with a specific runtime. Typically this is an LTS (long-term supported) version.
 # MAGIC
-# MAGIC This course is tested against and requires one of the following DBRs (Databricks Runtime): **13.1.x-cpu-ml-scala2.12, 13.1.x-gpu-ml-scala2.12**.
+# MAGIC This course is tested against and requires one of the following DBRs (Databricks Runtime): **13.3.x-cpu-ml-scala2.12, 13.3.x-gpu-ml-scala2.12**.
 # MAGIC
 # MAGIC For more current information, please <a href="https://files.training.databricks.com/static/troubleshooting.html#spark-version" target="_blank">Troubleshooting the Spark Version</a>
 
@@ -67,7 +67,7 @@
 # MAGIC
 # MAGIC Databricks Academy provides custom libraries to facilitate the development of its courseware. Your cluster requires access to these remotely hosted libraries so that they can be installed into your cluster.
 # MAGIC
-# MAGIC Various companies restrict access to external sites to limit data exfiltration and address other security concerns, such as leaking potentially sensitive or proprietary information.
+# MAGIC Various companies restrict access to external sites to limit data ex-filtration and address other security concerns, such as leaking potentially sensitive or proprietary information.
 # MAGIC
 # MAGIC For more current information, please see <a href="https://files.training.databricks.com/static/troubleshooting.html#cannot-install-libraries" target="_blank">Troubleshooting Library Installation</a>
 

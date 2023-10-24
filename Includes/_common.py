@@ -14,14 +14,14 @@ def __validate_libraries():
 def __install_libraries():
     global pip_command
     
-    specified_version = f"v3.0.84"
+    specified_version = f"v4.0.9"
     key = "dbacademy.library.version"
     version = spark.conf.get(key, specified_version)
 
     if specified_version != version:
         print("** Dependency Version Overridden *******************************************************************")
         print(f"* This course was built for {specified_version} of the DBAcademy Library, but it is being overridden via the Spark")
-        print(f"* configuration variable \"{key}\". The use of version v3.0.84 is not advised as we")
+        print(f"* configuration variable \"{key}\". The use of version v4.0.9 is not advised as we")
         print(f"* cannot guarantee compatibility with this version of the course.")
         print("****************************************************************************************************")
 
@@ -57,22 +57,16 @@ __install_libraries()
 
 # COMMAND ----------
 
-# MAGIC %run ./_dataset_index
-
-# COMMAND ----------
-
 from dbacademy import dbgems
 from dbacademy.dbhelper import DBAcademyHelper, Paths, CourseConfig, LessonConfig
 
 course_config = CourseConfig(course_code = "llm",
                              course_name = "large-language-models",
-                             data_source_name = "large-language-models",
-                             data_source_version = "v01",
-                             install_min_time = "5 min",
-                             install_max_time = "20 min",
-                             remote_files = remote_files,
-                             supported_dbrs = ["13.1.x-cpu-ml-scala2.12", "13.1.x-gpu-ml-scala2.12"],
-                             expected_dbrs = "13.1.x-cpu-ml-scala2.12, 13.1.x-gpu-ml-scala2.12")
+                             data_source_version = "v03",
+                             install_min_time = "15 min",
+                             install_max_time = "60 min",
+                             supported_dbrs = ["13.3.x-cpu-ml-scala2.12", "13.3.x-gpu-ml-scala2.12"],
+                             expected_dbrs = "13.3.x-cpu-ml-scala2.12, 13.3.x-gpu-ml-scala2.12")
 
 
 lesson_config = LessonConfig(name = None,
