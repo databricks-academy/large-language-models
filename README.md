@@ -52,21 +52,22 @@ This repo contains the notebooks and slides for the [Large Language Models: Appl
 
 2. This courseware has been tested on [Databricks Runtime 13.3 LTS for Machine Learning]([url](https://docs.databricks.com/en/release-notes/runtime/13.3lts-ml.html)). If you do not have access to a 13.3 LTS ML Runtime cluster, you will need to install many additional libraries (as the ML Runtime pre-installs many commonly used machine learning packages), and this courseware is not guaranteed to run. 
     
-    <img width="400" alt="cluster" src="https://files.training.databricks.com/images/llm/cluster.png">
+    <img width="400" alt="cluster" src="https://github.com/databricks-academy/large-language-models/assets/6416014/50dd3080-97d7-40ff-9eda-b91a359fa4ac">
+
 
     
     For all of the notebooks except `LLM 04a - Fine-tuning LLMs` and `LLM04L - Fine-tuning LLMs Lab`, you can run them on a CPU just fine. We recommend either `i3.xlarge` or `i3.2xlarge` (i3.2xlarge will have slightly faster performance).  
 
-    <img width="400" alt="cpu_settings" src="https://files.training.databricks.com/images/llm/cpu_settings.png">
+    <img width="400" alt="cpu_settings" src="https://github.com/databricks-academy/large-language-models/assets/6416014/4c8f6e92-0400-4aba-9107-27b911dd11c1">
     
     For these notebooks: `LLM 04a - Fine-tuning LLMs` and `LLM04L - Fine-tuning LLMs Lab`, you will need the Databricks Runtime 13.3 LTS for Machine Learning **with GPU**. 
 
-    <img width="400" alt="gpu" src="https://files.training.databricks.com/images/llm/gpu.png">
+    <img width="400" alt="gpu" src="https://github.com/databricks-academy/large-language-models/assets/6416014/2580d6da-f3a5-4562-9b4e-f0f4861e7c23">
 
     
     Select GPU instance type of `g5.2xlarge`.
 
-    <img width="400" alt="gpu_settings" src="https://files.training.databricks.com/images/llm/gpu_settings.png">
+    <img width="400" alt="gpu_settings" src="https://github.com/databricks-academy/large-language-models/assets/6416014/3934f739-458b-40db-8d96-02d5d274f58e">
 </details>
 
 <details>
