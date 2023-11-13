@@ -23,7 +23,7 @@
 # MAGIC   - pip install below
 # MAGIC - Spark connector jar file
 # MAGIC   - **IMPORTANT!!** Since we will be interacting with Spark by writing a Spark dataframe out to Pinecone, we need a Spark Connector.
-# MAGIC   - You need to attach a Spark-Pinecone connector `s3://pinecone-jars/spark-pinecone-uberjar.jar` in the cluster you are using. Refer to this [documentation](https://docs.pinecone.io/docs/databricks#setting-up-a-spark-cluster) if you need more information. 
+# MAGIC   - You need to attach a Spark-Pinecone connector `s3://pinecone-jars/0.2.1/spark-pinecone-uberjar.jar` in the cluster you are using. Refer to this [documentation](https://docs.pinecone.io/docs/databricks#setting-up-a-spark-cluster) if you need more information. 
 
 # COMMAND ----------
 
@@ -249,10 +249,11 @@ transformer_type = "sentence-transformers/all-MiniLM-L6-v2"
 embedding_spark_df = (
     df.limit(1000)
     .withColumn("values", create_embeddings_with_transformers("title")) 
-    .withColumn("namespace", F.lit(transformer_type))
+    .withColumn("namespace", F.lit(None)) ## Pinecone free-tier does not support namespace
+    .withColumn("sparse_values", F.lit(None)) ## required by Pinecone v2.0.1 release
     .withColumn("metadata", F.to_json(F.struct(F.col("topic").alias("TOPIC"))))
     # We select these columns because they are expected by the Spark-Pinecone connector
-    .select("id", "values", "namespace", "metadata")
+    .select("id", "values", "sparse_values", "namespace", "metadata")
 )
 display(embedding_spark_df)
 
@@ -287,7 +288,7 @@ pinecone_index = pinecone.Index(pinecone_index_name)
 # MAGIC %md
 # MAGIC Instead of writing in batches, you can now use Spark DataFrame Writer to write the data out to Pinecone directly.
 # MAGIC
-# MAGIC **IMPORTANT!!** You need to attach a Spark-Pinecone connector `s3://pinecone-jars/spark-pinecone-uberjar.jar` in the cluster you are using. Otherwise, this following command would fail. Refer to this [documentation](https://docs.pinecone.io/docs/databricks#setting-up-a-spark-cluster) if you need more information. 
+# MAGIC **IMPORTANT!!** You need to attach a Spark-Pinecone connector `s3://pinecone-jars/0.2.1/spark-pinecone-uberjar.jar` in the cluster you are using. Otherwise, this following command would fail. Refer to this [documentation](https://docs.pinecone.io/docs/databricks#setting-up-a-spark-cluster) and release note [here](https://github.com/pinecone-io/spark-pinecone/releases/tag/v0.2.1) if you need more information. 
 
 # COMMAND ----------
 
