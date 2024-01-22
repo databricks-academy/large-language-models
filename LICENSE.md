@@ -1,43 +1,25 @@
-Large Language Models: Application through Production
+# Large Language Models: Application through Production
 
-Copyright (2023) Databricks, Inc.
+Copyright (2024) Databricks, Inc.
 
-This library (the "Software") may not be used except in connection with the Licensee's use of the Databricks Platform Services pursuant
-to an Agreement (defined below) between Licensee (defined below) and Databricks, Inc. ("Databricks"). The Object Code version of the
-Software shall be deemed part of the Downloadable Services under the Agreement, or if the Agreement does not define Downloadable Services,
-Subscription Services, or if neither are defined then the term in such Agreement that refers to the applicable Databricks Platform
-Services (as defined below) shall be substituted herein for “Downloadable Services.”  Licensee's use of the Software must comply at
-all times with any restrictions applicable to the Downlodable Services and Subscription Services, generally, and must be used in
-accordance with any applicable documentation. For the avoidance of doubt, the Software constitutes Databricks Confidential Information
-under the Agreement.
+**Definitions**. 
 
-Additionally, and notwithstanding anything in the Agreement to the contrary:
-* THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
-  OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-  LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR
-  IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-* you may view, make limited copies of, and may compile the Source Code version of the Software into an Object Code version of the
-  Software.  For the avoidance of doubt, you may not make derivative works of Software (or make any any changes to the Source Code
-  version of the unless you have agreed to separate terms with Databricks permitting such modifications (e.g., a contribution license
-  agreement)).
+Agreement: The agreement between Databricks, Inc., and you governing the use of the Databricks Services, as that term is defined in the Master Cloud Services Agreement (MCSA) located at www.databricks.com/legal/mcsa.
 
-If you have not agreed to an Agreement or otherwise do not agree to these terms, you may not use the Software or view, copy or compile
-the Source Code of the Software.
+Licensed Materials: The source code, object code, data, and/or other works to which this license applies.
 
-This license terminates automatically upon the termination of the Agreement or Licensee's breach of these terms.  Additionally,
-Databricks may terminate this license at any time on notice.  Upon termination, you must permanently delete the Software and all
-copies thereof (including the Source Code).
+**Scope of Use**. You may not use the Licensed Materials except in connection with your use of the Databricks Services pursuant to the Agreement. Your use of the Licensed Materials must comply at all times with any restrictions applicable to the Databricks Services, generally, and must be used in accordance with any applicable documentation. You may view, use, copy, modify, publish, and/or distribute the Licensed Materials solely for the purposes of using the Licensed Materials within or connecting to the Databricks Services. If you do not agree to these terms, you may not view, use, copy, modify, publish, and/or distribute the Licensed Materials.
 
-Agreement: the agreement between Databricks and Licensee governing the use of the Databricks Platform Services, which shall be, with
-respect to Databricks, the Databricks Terms of Service located at www.databricks.com/termsofservice, and with respect to Databricks
-Community Edition, the Community Edition Terms of Service located at www.databricks.com/ce-termsofuse, in each case unless Licensee
-has entered into a separate written agreement with Databricks governing the use of the applicable Databricks Platform Services.
+**Redistribution**. You may redistribute and sublicense the Licensed Materials so long as all use is in compliance with these terms. In addition:
 
-Databricks Platform Services: the Databricks services or the Databricks Community Edition services, according to where the Software is used.
+You must give any other recipients a copy of this License;
+You must cause any modified files to carry prominent notices stating that you changed the files;
+You must retain, in any derivative works that you distribute, all copyright, patent, trademark, and attribution notices, excluding those notices that do not pertain to any part of the derivative works; and
+If a "NOTICE" text file is provided as part of its distribution, then any derivative works that you distribute must include a readable copy of the attribution notices contained within such NOTICE file, excluding those notices that do not pertain to any part of the derivative works.
+You may add your own copyright statement to your modifications and may provide additional license terms and conditions for use, reproduction, or distribution of your modifications, or for any such derivative works as a whole, provided your use, reproduction, and distribution of the Licensed Materials otherwise complies with the conditions stated in this License.
 
-Licensee: the user of the Software, or, if the Software is being used on behalf of a company, the company.
+**Termination**. This license terminates automatically upon your breach of these terms or upon the termination of your Agreement. Additionally, Databricks may terminate this license at any time on notice. Upon termination, you must permanently delete the Licensed Materials and all copies thereof.
 
-Object Code: is version of the Software produced when an interpreter or a compiler translates the Source Code into recognizable and
-executable machine code.
+**DISCLAIMER; LIMITATION OF LIABILITY.**
 
-Source Code: the human readable portion of the Software.
+THE LICENSED MATERIALS ARE PROVIDED “AS-IS” AND WITH ALL FAULTS. DATABRICKS, ON BEHALF OF ITSELF AND ITS LICENSORS, SPECIFICALLY DISCLAIMS ALL WARRANTIES RELATING TO THE LICENSED MATERIALS, EXPRESS AND IMPLIED, INCLUDING, WITHOUT LIMITATION, IMPLIED WARRANTIES, CONDITIONS AND OTHER TERMS OF MERCHANTABILITY, SATISFACTORY QUALITY OR FITNESS FOR A PARTICULAR PURPOSE, AND NON-INFRINGEMENT. DATABRICKS AND ITS LICENSORS TOTAL AGGREGATE LIABILITY RELATING TO OR ARISING OUT OF YOUR USE OF OR DATABRICKS’ PROVISIONING OF THE LICENSED MATERIALS SHALL BE LIMITED TO ONE THOUSAND ($1,000) DOLLARS.  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE LICENSED MATERIALS OR THE USE OR OTHER DEALINGS IN THE LICENSED MATERIALS.
